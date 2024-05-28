@@ -7,7 +7,7 @@ promedio_columnas = []
 with open('ISA\dataset.csv', 'r') as f:
     dataset = list(csv.reader(f))
     for i in range(1, len(dataset[0])):  # Comienza desde la segunda columna
-        columna = [abs(float(fila[i])) for fila in dataset[1:]]  # Comienza desde la segunda fila
+        columna = [float(fila[i]) for fila in dataset[1:]]  # Comienza desde la segunda fila
         columna_sin_none = [x for x in columna if x is not None]
         promedio_columnas.append(statistics.mean(columna_sin_none))
     

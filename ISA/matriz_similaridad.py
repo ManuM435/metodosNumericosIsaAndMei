@@ -5,10 +5,11 @@ import numpy as np
 
 # Lee todas las filas del archivo CSV
 vectores = []
-with open('ISA\dataset.csv', 'r') as f:
+with open('ISA/dataset.csv', 'r') as f:
     reader = csv.reader(f)
-    for fila in reader:
-        vectores.append([float(i) if i else 0 for i in fila])
+    next(reader)  # Ignora la primera fila
+    for fila in reader:   
+        vectores.append([float(i) if i else 0 for i in fila[1:]])
 
 # Crea una matriz de similaridad vacía
 matriz_similaridad = [[0 for _ in range(len(vectores))] for _ in range(len(vectores))]
