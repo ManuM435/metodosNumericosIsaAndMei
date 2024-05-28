@@ -5,7 +5,7 @@ import numpy as np
 
 # Lee todas las filas del archivo CSV
 vectores = []
-with open('/Users/isabelcastaneda/Desktop/Metodos Numericos y Optimizacion/TP3_Metodos/metodosNumericosIsaAndMei/ISA/dataset.csv', 'r') as f:
+with open('ISA\dataset.csv', 'r') as f:
     reader = csv.reader(f)
     for fila in reader:
         vectores.append([float(i) if i else 0 for i in fila])

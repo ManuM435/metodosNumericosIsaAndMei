@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import zoom
 
 promedio_columnas = []
-with open('/Users/isabelcastaneda/Desktop/Metodos Numericos y Optimizacion/TP3_Metodos/metodosNumericosIsaAndMei/ISA/dataset.csv', 'r') as f:
+with open('ISA\dataset.csv', 'r') as f:
     dataset = list(csv.reader(f))
     for i in range(1, len(dataset[0])):  # Comienza desde la segunda columna
         columna = [abs(float(fila[i])) for fila in dataset[1:]]  # Comienza desde la segunda fila
