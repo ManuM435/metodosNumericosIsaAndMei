@@ -24,16 +24,34 @@ sigma = 10  # Ajusta este valor según sea necesario
 # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana)
 
-# Reducir la dimensionalidad a dos
-U_reducida = U[:, :2]
-S_reducida = np.diag(S[:2])
-Vt_reducida = Vt[:2, :]
+# # Reducir la dimensionalidad a dos
+# U_reducida = U[:, :2]
+# S_reducida = np.diag(S[:2])
+# Vt_reducida = Vt[:2, :]
 
 
-# Generar el gráfico de dispersión
-plt.figure(figsize=(10, 5))
-plt.scatter(U_reducida[:, 0], U_reducida[:, 1])
-plt.title('Proyección de los datos en los dos primeros autovectores')
-plt.xlabel('Autovector 1')
-plt.ylabel('Autovector 2')
+# # Generar el gráfico de dispersión
+# plt.figure(figsize=(10, 5))
+# plt.scatter(U_reducida[:, 0], U_reducida[:, 1])
+# plt.title('Proyección de los datos en los dos primeros autovectores')
+# plt.xlabel('Autovector 1')
+# plt.ylabel('Autovector 2')
+# plt.show()
+
+# Reducir la dimensionalidad a tres
+U_reducida = U[:, :3]
+S_reducida = np.diag(S[:3])
+Vt_reducida = Vt[:3, :]
+
+# Importar la librería para gráficos 3D
+from mpl_toolkits.mplot3d import Axes3D
+
+# Generar el gráfico de dispersión 3D
+fig = plt.figure(figsize=(10, 5))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(U_reducida[:, 0], U_reducida[:, 1], U_reducida[:, 2])
+ax.set_title('Proyección de los datos en los tres primeros autovectores')
+ax.set_xlabel('Autovector 1')
+ax.set_ylabel('Autovector 2')
+ax.set_zlabel('Autovector 3')
 plt.show()
