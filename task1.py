@@ -8,14 +8,9 @@ from scipy.ndimage import zoom
 
 # Abrir el archivo csv
 promedio_columnas = []
-vectores = []
 
+promedio_columnas = []
 with open('dataset.csv', 'r') as f:
-    reader = csv.reader(f)
-    next(reader)
-    for fila in reader:   
-        vectores.append([float(i) if i else 0 for i in fila[1:]])
-
     dataset = list(csv.reader(f))
     for i in range(1, len(dataset[0])):  # Comienza desde la segunda columna
         columna = [float(fila[i]) for fila in dataset[1:]]  # Comienza desde la segunda fila
@@ -25,6 +20,15 @@ with open('dataset.csv', 'r') as f:
     matriz_datos = []
     for fila in dataset[1:]:  # Comienza desde la segunda fila
         matriz_datos.append([float(dato) for dato in fila[1:]])  # Comienza desde la segunda columna
+
+
+vectores = []
+with open('dataset.csv', 'r') as f:
+    reader = csv.reader(f)
+    next(reader)  # Ignora la primera fila
+    for fila in reader:   
+        vectores.append([float(i) if i else 0 for i in fila[1:]])
+
 
 
 # Calcular Matriz Mediana
