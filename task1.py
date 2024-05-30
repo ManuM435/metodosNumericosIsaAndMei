@@ -60,6 +60,7 @@ matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(
 # primera_columna = [fila[0] for fila in matriz_mediana]
 # print(primera_columna)
 
+# Esto de arriba es de la matriz original
 
 
 # Calcular la matriz de similaridad
