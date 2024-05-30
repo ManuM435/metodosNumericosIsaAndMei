@@ -2,7 +2,6 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import statistics
-import math
 import auxiliar as aux
 from scipy.ndimage import zoom
 from mpl_toolkits.mplot3d import Axes3D
@@ -61,21 +60,10 @@ matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(
 # primera_columna = [fila[0] for fila in matriz_mediana]
 # print(primera_columna)
 
-def expoDist(distance, sigma):
-    return np.exp(-distance ** 2 / (2 * sigma ** 2))
-
-def eucledian_distance(sigma, matrix):
-    matriz_similaridad = [[0 for _ in range(len(matrix))] for _ in range(len(matrix))]
-
-    for i in range(len(matrix)):
-        for j in range(len(matrix)):
-            distancia = math.sqrt(sum((matrix[i][k] - matrix[j][k]) ** 2 for k in range(len(matrix[i]))))
-            matriz_similaridad[i][j] = expoDist(distancia, sigma)
-    return matriz_similaridad
 
 
 # Calcular la matriz de similaridad
-similarity_matrix = eucledian_distance(20, vectores)
+similarity_matrix = aux.eucledian_distance(20, vectores)
 
 # Grafica la matriz de similaridad como una imagen
 plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
@@ -87,7 +75,7 @@ plt.show()
 
 
 # Calcular la matriz de similaridad centrada
-similarity_matrix_centered = eucledian_distance(50, matriz_mediana)
+similarity_matrix_centered = aux.eucledian_distance(50, matriz_mediana)
 
 # Grafica la matriz de similaridad centrada como una imagen
 plt.imshow(similarity_matrix_centered, cmap='hot', interpolation='nearest')
@@ -106,11 +94,6 @@ plt.show()
 # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana)
 
-# Para PCA y Dispersion 3D
-U_reducida = U[:, :3]
-S_reducida = np.diag(S[:3])
-Vt_reducida = Vt[:3, :]
-
 # Grafico de Significancia de Dimensiones
 plt.figure(figsize=(10, 5))
 plt.bar(range(1, len(S) + 1), S)
@@ -119,10 +102,32 @@ plt.xlabel('Índice del valor singular')
 plt.ylabel('Valor del valor singular')
 plt.show()
 
+
+# Para PCA y Dispersion 2D
+U_reducida = U[:, :2]
+S_reducida = np.diag(S[:2])
+Vt_reducida = Vt[:2, :]
+
+
+# Generar el gráfico de dispersión
+plt.figure(figsize=(10, 5))
+plt.scatter(U_reducida[:, 0], U_reducida[:, 1])
+plt.title('Proyección de los datos en los dos primeros autovectores')
+plt.xlabel('Autovector 1')
+plt.ylabel('Autovector 2')
+plt.show()
+
+
+# Para PCA y Dispersion 3D
+U_reducida3 = U[:, :3]
+S_reducida3 = np.diag(S[:3])
+Vt_reducida3 = Vt[:3, :]
+
+
 # Grafico de Dispersion 3D (PCA)
 fig = plt.figure(figsize=(10, 5))
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(U_reducida[:, 0], U_reducida[:, 1], U_reducida[:, 2])
+ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
 ax.set_title('Proyección de los datos en los tres primeros autovectores')
 ax.set_xlabel('Autovector 1')
 ax.set_ylabel('Autovector 2')
