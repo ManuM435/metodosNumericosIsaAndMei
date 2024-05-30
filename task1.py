@@ -5,10 +5,10 @@ import statistics
 import math
 import auxiliar as aux
 from scipy.ndimage import zoom
+from mpl_toolkits.mplot3d import Axes3D
+
 
 # Abrir el archivo csv
-promedio_columnas = []
-
 promedio_columnas = []
 with open('dataset.csv', 'r') as f:
     dataset = list(csv.reader(f))
@@ -61,7 +61,8 @@ matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(
 # primera_columna = [fila[0] for fila in matriz_mediana]
 # print(primera_columna)
 
-
+def expoDist(distance, sigma):
+    return np.exp(-distance ** 2 / (2 * sigma ** 2))
 
 def eucledian_distance(sigma, matrix):
     matriz_similaridad = [[0 for _ in range(len(matrix))] for _ in range(len(matrix))]
@@ -69,23 +70,11 @@ def eucledian_distance(sigma, matrix):
     for i in range(len(matrix)):
         for j in range(len(matrix)):
             distancia = math.sqrt(sum((matrix[i][k] - matrix[j][k]) ** 2 for k in range(len(matrix[i]))))
-            matriz_similaridad[i][j] = np.exp(-distancia ** 2 / (2 * sigma ** 2))
+            matriz_similaridad[i][j] = expoDist(distancia, sigma)
     return matriz_similaridad
 
-# # Crea una matriz de similaridad vacía
-# matriz_similaridadUncent = [[0 for _ in range(len(vectores))] for _ in range(len(vectores))]
 
-# # Define el valor de σ
-# sigma = 20  # Ajusta este valor según sea necesario
-
-# # Calcula la distancia euclidiana entre cada par de vectores y aplica la función de kernel
-# for i in range(len(vectores)):
-#     for j in range(len(vectores)):
-#         distancia = math.sqrt(sum((vectores[i][k] - vectores[j][k]) ** 2 for k in range(len(vectores[i]))))
-#         matriz_similaridadUncent[i][j] = np.exp(-distancia ** 2 / (2 * sigma ** 2))
-
-
-
+# Calcular la matriz de similaridad
 similarity_matrix = eucledian_distance(20, vectores)
 
 # Grafica la matriz de similaridad como una imagen
@@ -94,24 +83,10 @@ plt.colorbar()
 plt.show()
 
 
-
-# Esto es para hacer la matriz de similaridad Similaridad Centrada
-
-# # Crea una matriz de similaridad vacía
-# matriz_similaridadCent = [[0 for _ in range(len(matriz_mediana))] for _ in range(len(matriz_mediana))]
-
-# # Define el valor de σ
-# sigma = 50  # Ajusta este valor según sea necesario
-
-# # Calcula la distancia euclidiana entre cada par de vectores y aplica la función de kernel
-# for i in range(len(matriz_mediana)):
-#     for j in range(len(matriz_mediana)):
-#         distancia = math.sqrt(sum((matriz_mediana[i][k] - matriz_mediana[j][k]) ** 2 for k in range(len(matriz_mediana[i]))))
-#         matriz_similaridadCent[i][j] = np.exp(-distancia ** 2 / (2 * sigma ** 2))
-
+# Calcular la matriz de similaridad centrada
 similarity_matrix_centered = eucledian_distance(50, matriz_mediana)
 
-# Grafica la matriz de similaridad como una imagen
+# Grafica la matriz de similaridad centrada como una imagen
 plt.imshow(similarity_matrix_centered, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
@@ -120,19 +95,30 @@ plt.show()
 
 
 
-
-# Valores Singulares
-
-# Define el valor de σ
-sigma = 10  # Ajusta este valor según sea necesario
+# Down Here van Valores Singulares (Barritas que muestran la significancia de los valores de d) y PCA (Dispersion 3D) 
 
 # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana)
 
-# Generar el gráfico
+# Para PCA y Dispersion 3D
+U_reducida = U[:, :3]
+S_reducida = np.diag(S[:3])
+Vt_reducida = Vt[:3, :]
+
+# Grafico de Significancia de Dimensiones
 plt.figure(figsize=(10, 5))
 plt.bar(range(1, len(S) + 1), S)
 plt.title('Valores singulares de la matriz S')
 plt.xlabel('Índice del valor singular')
 plt.ylabel('Valor del valor singular')
+plt.show()
+
+# Grafico de Dispersion 3D (PCA)
+fig = plt.figure(figsize=(10, 5))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(U_reducida[:, 0], U_reducida[:, 1], U_reducida[:, 2])
+ax.set_title('Proyección de los datos en los tres primeros autovectores')
+ax.set_xlabel('Autovector 1')
+ax.set_ylabel('Autovector 2')
+ax.set_zlabel('Autovector 3')
 plt.show()
