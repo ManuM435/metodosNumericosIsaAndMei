@@ -80,6 +80,9 @@ similarity_matrix = eucledian_distance(20, vectores)
 # Grafica la matriz de similaridad como una imagen
 plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
 plt.colorbar()
+plt.xlabel('X Axis')
+plt.ylabel('Y Axis')
+plt.title('Matriz de Similaridad')
 plt.show()
 
 
@@ -89,6 +92,9 @@ similarity_matrix_centered = eucledian_distance(50, matriz_mediana)
 # Grafica la matriz de similaridad centrada como una imagen
 plt.imshow(similarity_matrix_centered, cmap='hot', interpolation='nearest')
 plt.colorbar()
+plt.xlabel('X Axis')
+plt.ylabel('Y Axis')
+plt.title('Matriz de Similaridad Centrada')
 plt.show()
 
 
@@ -161,5 +167,7 @@ sim_matrix_reduced = aux.eucledian_distance(10, matriz_reconstruida)
 plt.subplot(1, 2, 2)
 plt.imshow(sim_matrix_reduced, cmap='hot', interpolation='nearest')
 plt.colorbar()
-
+plt.xlabel('X Axis')
+plt.ylabel('Y Axis')
+plt.title('Reduced Similarity Matrix')
 plt.show()
