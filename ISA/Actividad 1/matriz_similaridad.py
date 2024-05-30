@@ -17,6 +17,7 @@ matriz_similaridad = [[0 for _ in range(len(vectores))] for _ in range(len(vecto
 # Define el valor de σ
 sigma = 20  # Ajusta este valor según sea necesario
 
+
 # Calcula la distancia euclidiana entre cada par de vectores y aplica la función de kernel
 for i in range(len(vectores)):
     for j in range(len(vectores)):

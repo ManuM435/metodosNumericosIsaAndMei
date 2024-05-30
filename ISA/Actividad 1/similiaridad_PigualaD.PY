@@ -24,6 +24,16 @@ sigma = 10  # Ajusta este valor según sea necesario
 # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana)
 
+# Generar el diccionario
+dict_autovector = {i: v for i, v in enumerate(Vt[0])}
+
+# Ordenar el diccionario de mayor a menor
+dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
+
+# Imprimir el diccionario ordenado
+for key, value in dict_autovector_ordenado.items():
+    print(f'Índice: {key}, Valor: {value}')
+
 # Reducir la dimensionalidad a dos
 U_reducida = U[:, :2]
 S_reducida = np.diag(S[:2])
