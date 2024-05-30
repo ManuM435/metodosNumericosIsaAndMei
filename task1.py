@@ -122,3 +122,44 @@ ax.set_xlabel('Autovector 1')
 ax.set_ylabel('Autovector 2')
 ax.set_zlabel('Autovector 3')
 plt.show()
+
+
+
+# Aca graficamos la matriz de similaridad con distintos valores de d
+
+# # Generar el diccionario
+# dict_autovector = {i: v for i, v in enumerate(Vt[0])}
+
+# # Ordenar el diccionario de mayor a menor
+# dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
+
+# # Imprimir el diccionario ordenado
+# for key, value in dict_autovector_ordenado.items():
+#     print(f'Índice: {key}, Valor: {value}')
+
+# Reducir la dimensionalidad a dos
+U_reduced = U[:, :2]
+S_reduced = np.diag(S[:2])
+Vt_reduced = Vt[:2, :]
+
+# # Reducir la dimensionalidad a seis
+# U_reduced = U[:, :6]
+# S_reduced = np.diag(S[:6])
+# Vt_reduced = Vt[:6, :]
+
+# # Reducir la dimensionalidad a diez
+# U_reduced = U[:, :10]
+# S_reduced = np.diag(S[:10])
+# Vt_reduced = Vt[:10, :]
+
+# Reconstruir la matriz
+matriz_reconstruida = U_reduced @ S_reduced @ Vt_reduced
+
+sim_matrix_reduced = aux.eucledian_distance(10, matriz_reconstruida)
+
+# Graficar la matriz de similaridad reducida
+plt.subplot(1, 2, 2)
+plt.imshow(sim_matrix_reduced, cmap='hot', interpolation='nearest')
+plt.colorbar()
+
+plt.show()
