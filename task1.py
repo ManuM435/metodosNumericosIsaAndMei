@@ -225,14 +225,12 @@ labels = y - np.mean(y)
 
 
 
-# # Calculate the predictions of y using beta 
-# despues metemos esto
-# y_pred = matriz_mediana_np @ beta + mean_y
 
 # Create a 3D plot
 
 datos = matriz_mediana
 labels = y - np.mean(y)
+
 
 def pseudoinvCalculatorInator(X):
     U, S, Vt = np.linalg.svd(X, full_matrices=False)
@@ -241,26 +239,40 @@ def pseudoinvCalculatorInator(X):
     return X_pseudoinverse
 
 
-def hyperPlanePlotInator(data, labels):
-    reduced_mat = PCAinator(data, 2)
+def hyperPlanePlotInator(data, labels, dimensions):
+    reduced_mat = PCAinator(data, dimensions)
     pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
     beta = pseudoinverse @ labels
 
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, color='b')
-    plt.colorbar(scatter)
+    # fig = plt.figure(figsize=(10, 7))
+    # ax = fig.add_subplot(111, projection='3d')
+    # scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, color='b')
+    # plt.colorbar(scatter)
 
     grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
                      np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
     grid_z =  grid_x * beta[0] + grid_y * beta[1]
 
-    ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
+    # ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
 
-    ax.set_xlabel('AV 1')
-    ax.set_ylabel('AV 2')
-    ax.set_zlabel('Labels')
-    ax.set_title('el grafiquinho del hiperplaninho')
-    plt.show()
+    # ax.set_xlabel('AV 1')
+    # ax.set_ylabel('AV 2')
+    # ax.set_zlabel('Labels')
+    # ax.set_title('el grafiquinho del hiperplaninho')
+    # plt.show()
 
-hyperPlanePlotInator(matriz_mediana, labels)
+    
+    error = np.linalg.norm(reduced_mat @ beta - labels)
+    return error
+
+
+hyperPlanePlotInator(matriz_mediana, labels, 2)
+
+# Trying Different Dimensions
+
+errors = []
+for i in range(2, 100):
+    topa = hyperPlanePlotInator(matriz_mediana, labels, i)
+    errors.append(topa)
+
+print(errors)
