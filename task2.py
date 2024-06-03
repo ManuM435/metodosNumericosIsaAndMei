@@ -41,22 +41,22 @@ dimensions = [2, 10, 24]  # The dimensions to use for reconstruction
 # Initialize the similarity matrix
 similarity_matrix = np.zeros((len(images), len(images)))
 
-for d in dimensions:
-    # Perform a reduced SVD on the data matrix
-    U_reduced = U[:, :d]
-    S_reduced = np.diag(S[:d])
-    Vt_reduced = Vt[:d, :]
-    data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+# for d in dimensions:
+#     # Perform a reduced SVD on the data matrix
+#     U_reduced = U[:, :d]
+#     S_reduced = np.diag(S[:d])
+#     Vt_reduced = Vt[:d, :]
+#     data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
 
-    # Initialize the similarity matrix
-    similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
+#     # Initialize the similarity matrix
+#     similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
 
-    # Visualize the similarity matrix
-    plt.figure(figsize=(10, 10))
-    plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
-    plt.colorbar(label='Similarity')
-    plt.title(f'Similarity Matrix (d={d})')
-    plt.show()
+#     # Visualize the similarity matrix
+#     plt.figure(figsize=(10, 10))
+#     plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
+#     plt.colorbar(label='Similarity')
+#     plt.title(f'Similarity Matrix (d={d})')
+#     plt.show()
 
 # Set the dimension to 24
 d = 24
@@ -123,3 +123,6 @@ for d in range(len(S)):
         break
 
 print(f"The minimum number of dimensions is {d+1}")
+
+
+

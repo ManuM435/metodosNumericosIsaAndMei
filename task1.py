@@ -33,10 +33,16 @@ with open('y.txt', 'r') as f:
     y = [float(line) for line in f]
 
 
+def PCAinator(Matriz, Dimensions):
+    U, S, Vt = np.linalg.svd(Matriz, full_matrices=False)
+    U_reduced = U[:, :Dimensions]
+    S_reduced = np.diag(S[:Dimensions])
+    matrix_reduced = np.dot(U_reduced, S_reduced)
 
+    return matrix_reduced
 
 # Calcular Matriz Mediana
-matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(matriz_datos[0]))] for i in range(len(matriz_datos))]
+matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 
 
@@ -68,7 +74,7 @@ matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(
 # Esto de arriba es de la matriz original
 
 
-# # Calcular la matriz de similaridad
+# Calcular la matriz de similaridad
 # similarity_matrix = aux.eucledian_distance(20, vectores)
 
 # # Grafica la matriz de similaridad como una imagen
@@ -98,7 +104,7 @@ matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(
 # # Down Here van Valores Singulares (Barritas que muestran la significancia de los valores de d) y PCA (Dispersion 3D) 
 
  # Descomposición SVD
-U, S, Vt = np.linalg.svd(matriz_mediana)
+U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 # # Grafico de Significancia de Dimensiones
 # plt.figure(figsize=(10, 5))
@@ -166,7 +172,9 @@ U, S, Vt = np.linalg.svd(matriz_mediana)
 # # for key, value in dict_autovector_ordenado.items():
 # #     print(f'Índice: {key}, Valor: {value}')
 
-# # Reducir la dimensionalidad a dos
+# Reducir la dimensionalidad a dos
+
+
 # U_reduced = U[:, :2]
 # S_reduced = np.diag(S[:2])
 # Vt_reduced = Vt[:2, :]
@@ -198,41 +206,9 @@ U, S, Vt = np.linalg.svd(matriz_mediana)
 
 #Cuadrados minimos
 
-# Calculate the mean of y
-mean_y = sum(y) / len(y)
+labels = y - np.mean(y)
 
-# Subtract the mean from each value in y to center it
-y_centered = [value - mean_y for value in y]
 
-# Convert S from a 1D array to a 2D diagonal matrix
-S_diag = np.diag(S).astype(float)
-
-# Convert matriz_mediana to a NumPy array
-matriz_mediana_np = np.array(matriz_mediana)
-
-# Create the matrix S_inv
-S_inv = np.zeros((106, 2000))
-eigen_values = S[:106]  # Get the first 106 eigen values
-
-# Set the diagonal elements of S_inv
-for i in range(106):
-    S_inv[i, i] = 1 / eigen_values[i]
-
-# Calculate the pseudoinverse of the original matrix
-X_pseudoinverse = Vt.T @ S_inv @ U.T
-
-# Calculate beta
-beta = X_pseudoinverse @ y_centered
-
-print("Shape of U:", U.shape)
-print("Shape of S:", S.shape)
-print("Shape of Vt:", Vt.shape)
-print("Shape of y_centered:", len(y_centered))
-print("Shape of S_diag:", S_diag.shape)
-print("Shape of matriz_mediana_np:", matriz_mediana_np.shape)
-print("Shape of S_inv:", S_inv.shape)
-print("Shape of X_pseudoinverse:", X_pseudoinverse.shape)
-print("Shape of beta:", beta.shape)
 
 # # Create a dictionary to store the order of values in beta
 # beta_order = {}
@@ -249,38 +225,42 @@ print("Shape of beta:", beta.shape)
 
 
 
-
-
-
-
-
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
-# Calculate the predictions of y using beta
-y_pred = matriz_mediana_np @ beta + mean_y
+# # Calculate the predictions of y using beta 
+# despues metemos esto
+# y_pred = matriz_mediana_np @ beta + mean_y
 
 # Create a 3D plot
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(111, projection='3d')
 
-# Plot the real values of y
-ax.scatter(U[:, 0], U[:, 1], y, color='b')
+datos = matriz_mediana
+labels = y - np.mean(y)
 
-# Create a grid over the range of U values
-grid_x, grid_y = np.meshgrid(np.linspace(min(U[:, 0]), max(U[:, 0]), 50),
-                             np.linspace(min(U[:, 1]), max(U[:, 1]), 50))
+def pseudoinvCalculatorInator(X):
+    U, S, Vt = np.linalg.svd(X, full_matrices=False)
+    S_inv = np.diag([1/S if S != 0 else 0 for S in S])
+    X_pseudoinverse = Vt.T @ S_inv @ U.T
+    return X_pseudoinverse
 
-# Calculate the corresponding z values for the grid
-grid_z =  grid_x * beta[0] + grid_y * beta[1]
 
-# Plot the hyperplane
-ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
+def hyperPlanePlotInator(data, labels):
+    reduced_mat = PCAinator(data, 2)
+    pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
+    beta = pseudoinverse @ labels
 
-# Set the labels
-ax.set_xlabel('Autovector 1')
-ax.set_ylabel('Autovector 2')
-ax.set_zlabel('y')
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+    scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, color='b')
+    plt.colorbar(scatter)
 
-# Show the plot
-plt.show()
+    grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
+                     np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
+    grid_z =  grid_x * beta[0] + grid_y * beta[1]
+
+    ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
+
+    ax.set_xlabel('AV 1')
+    ax.set_ylabel('AV 2')
+    ax.set_zlabel('Labels')
+    ax.set_title('el grafiquinho del hiperplaninho')
+    plt.show()
+
+hyperPlanePlotInator(matriz_mediana, labels)
