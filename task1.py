@@ -108,11 +108,23 @@ U, S, Vt = np.linalg.svd(matriz_mediana)
 # plt.ylabel('Valor del valor singular')
 # plt.show()
 
+# # Calculate the total sum of eigen values in S
+# total_sum = sum(S)
 
-# Para PCA y Dispersion 2D
-U_reducida = U[:, :2]
-S_reducida = np.diag(S[:2])
-Vt_reducida = Vt[:2, :]
+# # Calculate the sum of the first two eigen values in S
+# first_two_sum = sum(S[:2])
+
+# # Calculate the percentage represented by the first two eigen values
+# percentage = (first_two_sum / total_sum) * 100
+
+# # Print the percentage
+# print(f"The first two eigen values represent {percentage:.2f}% of the total sum.")
+
+
+# # Para PCA y Dispersion 2D
+# U_reducida = U[:, :2]
+# S_reducida = np.diag(S[:2])
+# Vt_reducida = Vt[:2, :]
 
 
 # # Generar el gráfico de dispersión
@@ -193,22 +205,54 @@ mean_y = sum(y) / len(y)
 y_centered = [value - mean_y for value in y]
 
 # Convert S from a 1D array to a 2D diagonal matrix
-S_diag = np.diag(S)
+S_diag = np.diag(S).astype(float)
 
 # Convert matriz_mediana to a NumPy array
 matriz_mediana_np = np.array(matriz_mediana)
 
-# Create an empty matrix of the right shape
-S_inv = np.zeros_like(matriz_mediana_np.T)
+# Create the matrix S_inv
+S_inv = np.zeros((106, 2000))
+eigen_values = S[:106]  # Get the first 106 eigen values
 
-# Fill the diagonal of S_inv with the reciprocals of the non-zero values of S_diag
-S_inv[:S_diag.shape[0], :S_diag.shape[0]] = np.linalg.inv(S_diag)
+# Set the diagonal elements of S_inv
+for i in range(106):
+    S_inv[i, i] = 1 / eigen_values[i]
 
 # Calculate the pseudoinverse of the original matrix
 X_pseudoinverse = Vt.T @ S_inv @ U.T
 
 # Calculate beta
 beta = X_pseudoinverse @ y_centered
+
+print("Shape of U:", U.shape)
+print("Shape of S:", S.shape)
+print("Shape of Vt:", Vt.shape)
+print("Shape of y_centered:", len(y_centered))
+print("Shape of S_diag:", S_diag.shape)
+print("Shape of matriz_mediana_np:", matriz_mediana_np.shape)
+print("Shape of S_inv:", S_inv.shape)
+print("Shape of X_pseudoinverse:", X_pseudoinverse.shape)
+print("Shape of beta:", beta.shape)
+
+# # Create a dictionary to store the order of values in beta
+# beta_order = {}
+
+# # Iterate over the values in beta and store their order in the dictionary
+# for i, value in enumerate(beta):
+#     beta_order[i+1] = abs(value)
+
+# # Sort the dictionary by the absolute values of the values in descending order
+# beta_order = {k: v for k, v in sorted(beta_order.items(), key=lambda item: item[1], reverse=True)}
+
+# # Print the dictionary
+# print(beta_order)
+
+
+
+
+
+
+
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -224,11 +268,11 @@ ax = fig.add_subplot(111, projection='3d')
 ax.scatter(U[:, 0], U[:, 1], y, color='b')
 
 # Create a grid over the range of U values
-grid_x, grid_y = np.meshgrid(np.linspace(min(U[:, 0]), max(U[:, 0]), num=100),
-                             np.linspace(min(U[:, 1]), max(U[:, 1]), num=100))
+grid_x, grid_y = np.meshgrid(np.linspace(min(U[:, 0]), max(U[:, 0]), 50),
+                             np.linspace(min(U[:, 1]), max(U[:, 1]), 50))
 
 # Calculate the corresponding z values for the grid
-grid_z = beta[0] + grid_x * beta[1] + grid_y * beta[2] + mean_y
+grid_z =  grid_x * beta[0] + grid_y * beta[1]
 
 # Plot the hyperplane
 ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
