@@ -27,7 +27,7 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 # # Reconstruct the images from the low-dimensional representation and visualize them
-dimensions = [2, 10, 16, 24]  # The dimensions to use for reconstruction
+dimensions = [2, 5, 10, 24]  # The dimensions to use for reconstruction
 # for i in range(len(data_matrix)):
 #     plt.figure(figsize=(10, 10))
 #     for j, d in enumerate(dimensions):
