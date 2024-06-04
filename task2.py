@@ -26,8 +26,8 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 
-# Reconstruct the images from the low-dimensional representation and visualize them
-# dimensions = [2, 10, 24]  # The dimensions to use for reconstruction
+# # Reconstruct the images from the low-dimensional representation and visualize them
+dimensions = [2, 10, 16, 24]  # The dimensions to use for reconstruction
 # for i in range(len(data_matrix)):
 #     plt.figure(figsize=(10, 10))
 #     for j, d in enumerate(dimensions):
@@ -44,8 +44,8 @@ p = int(np.sqrt(images[0].shape[0]))
 #     plt.suptitle(f'Image {i} Reconstruction')
 #     plt.show()
 
-# # Initialize the similarity matrix
-# similarity_matrix = np.zeros((len(images), len(images)))
+# Initialize the similarity matrix
+similarity_matrix = np.zeros((len(images), len(images)))
 
 # for d in dimensions:
 #     # Perform a reduced SVD on the data matrix
@@ -144,10 +144,21 @@ def errorByDimensions(image_list, max_dimension):
     return errors
 
 # Load the images
-images2 = []
+images2, imagesforMat2 = [], []
+
 for filename in os.listdir('datasets_imgs_02'):
-    img = Image.open(os.path.join('datasets_imgs_02', filename))
-    images2.append(np.array(img))
+    img2 = Image.open(os.path.join('datasets_imgs_02', filename))
+    images2.append(np.array(img2))
+
+for filename in os.listdir('datasets_imgs_02'):
+    img2m = Image.open(os.path.join('datasets_imgs_02', filename))
+    img_vector2 = np.array(img2m).flatten()
+    imagesforMat2.append(img_vector2)
+
+# Stack the vectors to form a data matrix
+data_matrix2 = np.vstack(imagesforMat2)
+
+
 
 # Calculate the maximum errors for each dimension
 max_dimension = 24
@@ -165,8 +176,20 @@ plt.xticks(range(1, max_dimension + 1))  # Set x-axis ticks for every whole valu
 plt.xlim(1, max_dimension)  # Set the x-axis limit to remove empty space on the right
 plt.ylim(0, 0.6)  # Set the y-axis limit to show the full range of errors
 plt.grid(axis='x')  # Add vertical grid lines
-plt.legend()  # Add legend
 plt.show()
 
+
+ladimen = 7
+
+# Compression of Dataset 1
+U_reduced2 = U[:, :ladimen]
+S_reduced2 = np.diag(S[:ladimen])
+Vt_reduced2 = Vt[:ladimen, :]
+V_reduced2 = Vt_reduced2.T
+
+data_matrix_preds = data_matrix @ V_reduced2 @ Vt_reduced2
+
+errorRecon = round(frobeniusNorm(data_matrix - data_matrix_preds) / frobeniusNorm(data_matrix) * 100, 2)
+print(f"Approximation Error is: {errorRecon}%")
 
 
