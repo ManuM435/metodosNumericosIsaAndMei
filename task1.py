@@ -71,6 +71,12 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 # Esto de arriba es de la matriz original
 
 
+
+
+
+
+
+
 # # Calcular la matriz de similaridad
 # similarity_matrix = aux.eucledian_distance(20, vectores)
 
