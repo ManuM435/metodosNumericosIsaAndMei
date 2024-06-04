@@ -101,35 +101,6 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 # plt.show()
 
 
-
-
-
-# # Down Here van Valores Singulares (Barritas que muestran la significancia de los valores de d) y PCA (Dispersion 3D) 
-
- # Descomposición SVD
-U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
-
-# # Grafico de Significancia de Dimensiones
-# plt.figure(figsize=(10, 5))
-# plt.bar(range(1, len(S) + 1), S)
-# plt.title('Valores singulares de la matriz S')
-# plt.xlabel('Índice del valor singular')
-# plt.ylabel('Valor del valor singular')
-# plt.show()
-
-# # Calculate the total sum of eigen values in S
-# total_sum = sum(S)
-
-# # Calculate the sum of the first two eigen values in S
-# first_two_sum = sum(S[:2])
-
-# # Calculate the percentage represented by the first two eigen values
-# percentage = (first_two_sum / total_sum) * 100
-
-# # Print the percentage
-# print(f"The first two eigen values represent {percentage:.2f}% of the total sum.")
-
-
 # # Para PCA y Dispersion 2D
 # U_reducida = U[:, :2]
 # S_reducida = np.diag(S[:2])
@@ -206,6 +177,35 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 # plt.show()
 
 
+# # Down Here van Valores Singulares (Barritas que muestran la significancia de los valores de d) y PCA (Dispersion 3D) 
+
+ # Descomposición SVD
+U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
+
+# # Grafico de Significancia de Dimensiones
+# plt.figure(figsize=(10, 5))
+# plt.bar(range(1, len(S) + 1), S)
+# plt.title('Valores singulares de la matriz S')
+# plt.xlabel('Índice del valor singular')
+# plt.ylabel('Valor del valor singular')
+# plt.show()
+
+# # Calculate the total sum of eigen values in S
+# total_sum = sum(S)
+
+# # Calculate the sum of the first two eigen values in S
+# first_two_sum = sum(S[:2])
+
+# # Calculate the percentage represented by the first two eigen values
+# percentage = (first_two_sum / total_sum) * 100
+
+# # Print the percentage
+# print(f"The first two eigen values represent {percentage:.2f}% of the total sum.")
+
+
+
+
+
 #Cuadrados minimos
 
 # # Create a dictionary to store the order of values in beta
@@ -267,14 +267,16 @@ hyperPlanePlotInator(matriz_mediana, labels, 2)
 
 # Trying Different Dimensions
 
+max_dim = 107
+
 errors = []
-for i in range(2, 100):
+for i in range(2, max_dim):
     topa = hyperPlanePlotInator(matriz_mediana, labels, i)
     errors.append(topa)
 
 # Plot the errors
 plt.figure(figsize=(10, 7))
-plt.plot(range(2, 100), errors, marker='o')
+plt.plot(range(2, max_dim), errors, marker='o')
 plt.xlabel('Dimensions')
 plt.ylabel('Error')
 plt.title('Error by Dimensions')
