@@ -44,9 +44,6 @@ def PCAinator(Matriz, Dimensions):
 # Calcular Matriz Mediana
 matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
-
-
-
 # Esto es para graficar la matriz original
 
 # matriz_promedio_columnas = []
@@ -74,7 +71,7 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 # Esto de arriba es de la matriz original
 
 
-# Calcular la matriz de similaridad
+# # Calcular la matriz de similaridad
 # similarity_matrix = aux.eucledian_distance(20, vectores)
 
 # # Grafica la matriz de similaridad como una imagen
@@ -174,7 +171,6 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 # Reducir la dimensionalidad a dos
 
-
 # U_reduced = U[:, :2]
 # S_reduced = np.diag(S[:2])
 # Vt_reduced = Vt[:2, :]
@@ -205,10 +201,6 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 
 #Cuadrados minimos
-
-labels = y - np.mean(y)
-
-
 
 # # Create a dictionary to store the order of values in beta
 # beta_order = {}
@@ -244,17 +236,16 @@ def hyperPlanePlotInator(data, labels, dimensions):
     pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
     beta = pseudoinverse @ labels
 
+    grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
+                     np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
+    grid_z =  grid_x * beta[0] + grid_y * beta[1]
+
     # fig = plt.figure(figsize=(10, 7))
     # ax = fig.add_subplot(111, projection='3d')
     # scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, color='b')
     # plt.colorbar(scatter)
 
-    grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
-                     np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
-    grid_z =  grid_x * beta[0] + grid_y * beta[1]
-
     # ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
-
     # ax.set_xlabel('AV 1')
     # ax.set_ylabel('AV 2')
     # ax.set_zlabel('Labels')
@@ -275,4 +266,11 @@ for i in range(2, 100):
     topa = hyperPlanePlotInator(matriz_mediana, labels, i)
     errors.append(topa)
 
-print(errors)
+# Plot the errors
+plt.figure(figsize=(10, 7))
+plt.plot(range(2, 100), errors, marker='o')
+plt.xlabel('Dimensions')
+plt.ylabel('Error')
+plt.title('Error by Dimensions')
+plt.grid()
+plt.show()
