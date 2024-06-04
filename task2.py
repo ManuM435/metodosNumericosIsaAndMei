@@ -4,16 +4,15 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import auxiliar as aux
 
-def load_images(folder):
-    images = []
-    for filename in os.listdir(folder):
-        img = Image.open(os.path.join(folder, filename))
-        img_vector = np.array(img).flatten()
-        images.append(img_vector)
-    data_matrix = np.vstack(images)
-    return data_matrix, images
+# Load the images and convert them into vectors
+images = []
+for filename in os.listdir('datasets_imgs'):
+    img = Image.open(os.path.join('datasets_imgs', filename))
+    img_vector = np.array(img).flatten()
+    images.append(img_vector)
 
-data_matrix, images = load_images('datasets_imgs')
+# Stack the vectors to form a data matrix
+data_matrix = np.vstack(images)
 
 # Perform a singular value decomposition (SVD) on the data matrix
 U, S, Vt = np.linalg.svd(data_matrix, full_matrices=False)
@@ -125,44 +124,48 @@ def redimensionalizerInator(image, dimension):
     return image_reduced
 
 
+def frobeniusRelativeError(OriginalMatrix, dimension):
+    reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
+    error = frobeniusNorm(OriginalMatrix - reduced_matrix) / frobeniusNorm(OriginalMatrix)
+    return error
 
-# Ver si hay que hacer que trabaje con matrices o imagenes
+def frobeniusMaximumError(image_list, dimension):
+    errors = []
+    for image in image_list:
+        error = frobeniusRelativeError(image, dimension)
+        errors.append(error)
+    return min(errors)
 
+def errorByDimensions(image_list, max_dimension):
+    errors = []
+    for i in range(1, max_dimension + 1):
+        error = frobeniusMaximumError(image_list, i)
+        errors.append(error)
+    return errors
 
-# def frobeniusRelativeError(OriginalMatrix, dimension):
-#     reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
-#     error = frobeniusNorm(OriginalMatrix - reduced_matrix)  / frobeniusNorm(OriginalMatrix)
-#     return error
-
-# def frobeniusMaximumError(image_list, dimension):
-#     errors = []
-#     for image in image_list:
-#         error = frobeniusRelativeError(image, dimension) 
-#         errors.append(error)
-#     return min(errors)
-
-# def errorByDimensions(image_list, max_dimension):
-#     errors = []
-#     for i in range(1, max_dimension + 1):
-#         error = frobeniusMaximumError(image_list, i)
-#         errors.append(error)
-#     return errors
-
-data_matrix2, images2 = load_images('datasets_imgs_02')
-
+# Load the images
+images2 = []
+for filename in os.listdir('datasets_imgs_02'):
+    img = Image.open(os.path.join('datasets_imgs_02', filename))
+    images2.append(np.array(img))
 
 # Calculate the maximum errors for each dimension
 max_dimension = 24
-max_errors = errorByDimensions(data_matrix2, max_dimension)
+max_errors = errorByDimensions(images2, max_dimension)
 
 # Plot the maximum errors
 plt.figure(figsize=(10, 7))
-plt.plot(range(1, max_dimension + 1), max_errors, marker='o')
+plt.fill_between(range(1, max_dimension + 1), max_errors, color='skyblue', alpha=0.4)
+plt.plot(range(1, max_dimension + 1), max_errors, marker='o', color='blue')
+plt.axhline(y=0.1, color='r', linestyle='--')  # Add red dotted line at y=0.1
 plt.xlabel('Dimensions')
-plt.ylabel('Maximum Frobenius Error')
+plt.ylabel('Maximum Frobenius Relative Error')
 plt.title('Maximum Frobenius Error by Dimensions')
-plt.grid()
-plt.yscale('log')  # Set the y-axis scale to logarithmic
+plt.xticks(range(1, max_dimension + 1))  # Set x-axis ticks for every whole value between 1 and 24
+plt.xlim(1, max_dimension)  # Set the x-axis limit to remove empty space on the right
+plt.ylim(0, 0.6)  # Set the y-axis limit to show the full range of errors
+plt.grid(axis='x')  # Add vertical grid lines
+plt.legend()  # Add legend
 plt.show()
 
 
