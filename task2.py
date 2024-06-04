@@ -99,8 +99,12 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 
-# 2.4
 
+
+
+
+
+# 2.4
 
 
 def frobeniusNorm(X):
