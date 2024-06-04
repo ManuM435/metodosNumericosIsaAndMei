@@ -20,8 +20,14 @@ U, S, Vt = np.linalg.svd(data_matrix, full_matrices=False)
 # Get the dimension of the images (assuming they are square)
 p = int(np.sqrt(images[0].shape[0]))
 
+
+
+
+
+
+
 # Reconstruct the images from the low-dimensional representation and visualize them
-dimensions = [2, 10, 24]  # The dimensions to use for reconstruction
+# dimensions = [2, 10, 24]  # The dimensions to use for reconstruction
 # for i in range(len(data_matrix)):
 #     plt.figure(figsize=(10, 10))
 #     for j, d in enumerate(dimensions):
@@ -38,8 +44,8 @@ dimensions = [2, 10, 24]  # The dimensions to use for reconstruction
 #     plt.suptitle(f'Image {i} Reconstruction')
 #     plt.show()
 
-# Initialize the similarity matrix
-similarity_matrix = np.zeros((len(images), len(images)))
+# # Initialize the similarity matrix
+# similarity_matrix = np.zeros((len(images), len(images)))
 
 # for d in dimensions:
 #     # Perform a reduced SVD on the data matrix
@@ -58,71 +64,100 @@ similarity_matrix = np.zeros((len(images), len(images)))
 #     plt.title(f'Similarity Matrix (d={d})')
 #     plt.show()
 
-# Set the dimension to 24
-d = 24
+# # Set the dimension to 24
+# d = 24
 
-# Perform a reduced SVD on the data matrix
-U_reduced = U[:, :d]
-S_reduced = np.diag(S[:d])
-Vt_reduced = Vt[:d, :]
-data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+# # Perform a reduced SVD on the data matrix
+# U_reduced = U[:, :d]
+# S_reduced = np.diag(S[:d])
+# Vt_reduced = Vt[:d, :]
+# data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
 
-# Initialize a figure
-fig, axs = plt.subplots(4, 5, figsize=(10, 10))
+# # Initialize a figure
+# fig, axs = plt.subplots(4, 5, figsize=(10, 10))
 
-# Flatten the axes
-axs = axs.flatten()
+# # Flatten the axes
+# axs = axs.flatten()
 
-# Loop over each image
-for i in range(len(data_matrix_reduced)):
-    # Reconstruct the image
-    img_reconstructed = data_matrix_reduced[i].reshape((p, p))  # Assuming the images are size p x p
+# # Loop over each image
+# for i in range(len(data_matrix_reduced)):
+#     # Reconstruct the image
+#     img_reconstructed = data_matrix_reduced[i].reshape((p, p))  # Assuming the images are size p x p
 
-    # Add the image to the plot
-    axs[i].imshow(img_reconstructed, cmap='gray')
-    axs[i].axis('off')  # Hide the axes
+#     # Add the image to the plot
+#     axs[i].imshow(img_reconstructed, cmap='gray')
+#     axs[i].axis('off')  # Hide the axes
 
-# Remove the last unused subplot
-fig.delaxes(axs[-1])
+# # Remove the last unused subplot
+# fig.delaxes(axs[-1])
 
-# Show the plot
-plt.suptitle('All Images at d=24')
-plt.show()
+# # Show the plot
+# plt.suptitle('All Images at d=24')
+# plt.show()
 
-import numpy as np
-import os
-from PIL import Image
+
+
+
+
+# 2.4
+
+
+
+def frobeniusNorm(X):
+    norm = 0
+    for i in range(len(X)):
+        for j in range(len(X[0])):
+            norm += X[i][j] ** 2
+    return np.sqrt(norm)
+
+
+def redimensionalizerInator(image, dimension):
+    U, S, Vt = np.linalg.svd(image, full_matrices=False)
+    U_reduced = U[:, :dimension]
+    S_reduced = np.diag(S[:dimension])
+    Vt_reduced = Vt[:dimension, :]
+    image_reduced = U_reduced @ S_reduced @ Vt_reduced
+    return image_reduced
+
+
+def frobeniusError(OriginalMatrix, dimension):
+    reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
+    error = frobeniusNorm(OriginalMatrix - reduced_matrix)
+    return error
+
+def frobeniusMaximumError(image_list, dimension):
+    errors = []
+    for image in image_list:
+        error = frobeniusError(image, dimension)
+        errors.append(error)
+    return min(errors)
+
+def errorByDimensions(image_list, max_dimension):
+    errors = []
+    for i in range(1, max_dimension + 1):
+        error = frobeniusMaximumError(image_list, i)
+        errors.append(error)
+    return errors
 
 # Load the images
-image_files = os.listdir('/Users/isabelcastaneda/Documents/GitHub/metodosNumericosIsaAndMei/datasets_imgs_02')
-images = [np.array(Image.open('/Users/isabelcastaneda/Documents/GitHub/metodosNumericosIsaAndMei/datasets_imgs_02/' + file)) for file in image_files]
+images2 = []
+for filename in os.listdir('datasets_imgs'):
+    img = Image.open(os.path.join('datasets_imgs', filename))
+    images2.append(np.array(img))
 
-# Convert the list of images to a data matrix
-data_matrix_2 = np.array(images).reshape(len(images), -1)
+# Calculate the maximum errors for each dimension
+max_dimension = 24
+max_errors = errorByDimensions(images2, max_dimension)
 
-# Apply SVD
-U, S, Vt = np.linalg.svd(data_matrix_2, full_matrices=False)
-
-# Calculate the total variance of the original data matrix
-total_variance = np.linalg.norm(data_matrix_2, 'fro')**2
-
-# Initialize the sum of squared singular values up to d
-sum_of_squared_singular_values_up_to_d = 0
-
-# Loop over the singular values
-for d in range(len(S)):
-    # Add the square of the current singular value
-    sum_of_squared_singular_values_up_to_d += S[d]**2
-
-    # Calculate the proportion of the total variance
-    proportion_of_total_variance = sum_of_squared_singular_values_up_to_d / total_variance
-
-    # If the proportion of the total variance is greater than 0.9 (i.e., the error is less than 10%),
-    # then we have found the minimum number of dimensions
-    if proportion_of_total_variance >= 0.9:
-        break
-
-print(f"The minimum number of dimensions is {d+1}")
+# Plot the maximum errors
+plt.figure(figsize=(10, 7))
+plt.plot(range(1, max_dimension + 1), max_errors, marker='o')
+plt.xlabel('Dimensions')
+plt.ylabel('Maximum Frobenius Error')
+plt.title('Maximum Frobenius Error by Dimensions')
+plt.grid()
+plt.yscale('log')  # Set the y-axis scale to logarithmic
+plt.show()
 
 
 
