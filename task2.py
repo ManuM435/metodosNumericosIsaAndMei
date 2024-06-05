@@ -164,4 +164,17 @@ plt.yscale('log')  # Set the y-axis scale to logarithmic
 plt.show()
 
 
+# DUDAS Y PENDIENTES
+# Ver como calcular el peso en el 1.3
+# A que se refiere el 10%
+# Matriz entera reducir la dimensionalidad o imagen por imagen
+# Utilizando esta ultima representación aprendida con el dataset 2 
+#   ¿Qué error de reconstrucción obtienen si utilizan la misma 
+#   compresión (con la misma base de d dimensiones obtenida del dataset 2) para 
+#   las imagenes dataset_imagenes1.zip?
+# Ver lo de Z= US producto punto
+# Que es lo de z = Vt @ x
+# Cuando dice PCA, que hacemos?
+
+
 

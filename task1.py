@@ -39,7 +39,7 @@ def PCAinator(Matriz, Dimensions):
     S_reduced = np.diag(S[:Dimensions])
     matrix_reduced = np.dot(U_reduced, S_reduced)
 
-    return matrix_reduced
+    return matrix_reduced, Vt[:Dimensions, :]
 
 # Calcular Matriz Mediana
 matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
@@ -49,35 +49,35 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 # Esto es para graficar la matriz original
 
-# matriz_promedio_columnas = []
-# for fila in matriz_datos:
-#     matriz_promedio_columnas.append([dato - promedio_columnas[i] for i, dato in enumerate(fila)])
+matriz_promedio_columnas = []
+for fila in matriz_datos:
+    matriz_promedio_columnas.append([dato - promedio_columnas[i] for i, dato in enumerate(fila)])
 
-# matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(matriz_datos[0]))] for i in range(len(matriz_datos))]
+matriz_mediana = [[matriz_datos[i][j] - promedio_columnas[j] for j in range(len(matriz_datos[0]))] for i in range(len(matriz_datos))]
 
-# # primera_columna_mediana = [fila[0] for fila in matriz_mediana]
-# # print(primera_columna_mediana)
-# # Calcular el factor de zoom para cada dimensión
-# zoom_factor = [2000 / len(matriz_mediana), 2000 / len(matriz_mediana[0])]
+# primera_columna_mediana = [fila[0] for fila in matriz_mediana]
+# print(primera_columna_mediana)
+# Calcular el factor de zoom para cada dimensión
+zoom_factor = [2000 / len(matriz_mediana), 2000 / len(matriz_mediana[0])]
 
-# # Redimensionar la matriz con interpolación de orden cero
-# matriz_mediana_resized = zoom(matriz_mediana, zoom_factor, order=0)
+# Redimensionar la matriz con interpolación de orden cero
+matriz_mediana_resized = zoom(matriz_mediana, zoom_factor, order=0)
 
-# # Mostrar la matriz redimensionada como una imagen
-# fig, ax = plt.subplots(figsize=(6, 6)) 
-# ax.imshow(matriz_mediana, cmap='hot', interpolation='none')
-# plt.show()
+# Mostrar la matriz redimensionada como una imagen
+fig, ax = plt.subplots(figsize=(6, 6)) 
+ax.imshow(matriz_mediana, cmap='hot', interpolation='none')
+plt.show()
 
-# primera_columna = [fila[0] for fila in matriz_mediana]
-# print(primera_columna)
+primera_columna = [fila[0] for fila in matriz_mediana]
+print(primera_columna)
 
-# Esto de arriba es de la matriz original
+#Esto de arriba es de la matriz original
 
 
 # Calcular la matriz de similaridad
-# similarity_matrix = aux.eucledian_distance(20, vectores)
+similarity_matrix = aux.eucledian_distance(20, vectores)
 
-# # Grafica la matriz de similaridad como una imagen
+# #Grafica la matriz de similaridad como una imagen
 # plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
 # plt.colorbar()
 # plt.xlabel('X Axis')
@@ -87,9 +87,9 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 
 # # Calcular la matriz de similaridad centrada
-# similarity_matrix_centered = aux.eucledian_distance(50, matriz_mediana)
+# similarity_matrix_centered = aux.eucledian_distance(15, matriz_mediana)
 
-# # Grafica la matriz de similaridad centrada como una imagen
+# #Grafica la matriz de similaridad centrada como una imagen
 # plt.imshow(similarity_matrix_centered, cmap='hot', interpolation='nearest')
 # plt.colorbar()
 # plt.xlabel('X Axis')
@@ -106,25 +106,25 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
  # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
-# # Grafico de Significancia de Dimensiones
-# plt.figure(figsize=(10, 5))
-# plt.bar(range(1, len(S) + 1), S)
-# plt.title('Valores singulares de la matriz S')
-# plt.xlabel('Índice del valor singular')
-# plt.ylabel('Valor del valor singular')
-# plt.show()
+# # # Grafico de Significancia de Dimensiones
+# # plt.figure(figsize=(10, 5))
+# # plt.bar(range(1, len(S) + 1), S)
+# # plt.title('Valores singulares de la matriz S')
+# # plt.xlabel('Índice del valor singular')
+# # plt.ylabel('Valor del valor singular')
+# # plt.show()
 
-# # Calculate the total sum of eigen values in S
-# total_sum = sum(S)
+# # # Calculate the total sum of eigen values in S
+# # total_sum = sum(S)
 
-# # Calculate the sum of the first two eigen values in S
-# first_two_sum = sum(S[:2])
+# # # Calculate the sum of the first two eigen values in S
+# # first_two_sum = sum(S[:2])
 
-# # Calculate the percentage represented by the first two eigen values
-# percentage = (first_two_sum / total_sum) * 100
+# # # Calculate the percentage represented by the first two eigen values
+# # percentage = (first_two_sum / total_sum) * 100
 
-# # Print the percentage
-# print(f"The first two eigen values represent {percentage:.2f}% of the total sum.")
+# # # Print the percentage
+# # print(f"The first two eigen values represent {percentage:.2f}% of the total sum.")
 
 
 # # Para PCA y Dispersion 2D
@@ -134,50 +134,57 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 
 # # Generar el gráfico de dispersión
+
+# Z, vt = PCAinator(matriz_mediana, 2)
 # plt.figure(figsize=(10, 5))
-# plt.scatter(U_reducida[:, 0], U_reducida[:, 1])
+# plt.scatter(Z[:, 0], Z[:, 1])
 # plt.title('Proyección de los datos en los dos primeros autovectores')
 # plt.xlabel('Autovector 1')
 # plt.ylabel('Autovector 2')
 # plt.show()
 
 
-# # Para PCA y Dispersion 3D
-# U_reducida3 = U[:, :3]
-# S_reducida3 = np.diag(S[:3])
-# Vt_reducida3 = Vt[:3, :]
+# # # Para PCA y Dispersion 3D
+# # U_reducida3 = U[:, :3]
+# # S_reducida3 = np.diag(S[:3])
+# # Vt_reducida3 = Vt[:3, :]
 
 
-# # Grafico de Dispersion 3D (PCA)
-# fig = plt.figure(figsize=(10, 5))
-# ax = fig.add_subplot(111, projection='3d')
-# ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
-# ax.set_title('Proyección de los datos en los tres primeros autovectores')
-# ax.set_xlabel('Autovector 1')
-# ax.set_ylabel('Autovector 2')
-# ax.set_zlabel('Autovector 3')
-# plt.show()
+# # # Grafico de Dispersion 3D (PCA)
+# # fig = plt.figure(figsize=(10, 5))
+# # ax = fig.add_subplot(111, projection='3d')
+# # ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
+# # ax.set_title('Proyección de los datos en los tres primeros autovectores')
+# # ax.set_xlabel('Autovector 1')
+# # ax.set_ylabel('Autovector 2')
+# # ax.set_zlabel('Autovector 3')
+# # plt.show()
 
 
 
 # # Aca graficamos la matriz de similaridad con distintos valores de d
 
-# # # Generar el diccionario
-# # dict_autovector = {i: v for i, v in enumerate(Vt[0])}
+# # Generar el diccionario
+# dict_autovector = {i: v for i, v in enumerate(Vt[0])}
 
-# # # Ordenar el diccionario de mayor a menor
-# # dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
+# # Ordenar el diccionario de mayor a menor
+# dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
 
-# # # Imprimir el diccionario ordenado
-# # for key, value in dict_autovector_ordenado.items():
-# #     print(f'Índice: {key}, Valor: {value}')
+# # Imprimir el diccionario ordenado
+# for key, value in dict_autovector_ordenado.items():
+#     print(f'Índice: {key}, Valor: {value}')
+
+# # Crear un gráfico de barras de los valores
+# plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
+# plt.title('Valores del primer autovector')
+# plt.show()
 
 # Reducir la dimensionalidad a dos
 
 
-# U_reduced = U[:, :2]
-# S_reduced = np.diag(S[:2])
-# Vt_reduced = Vt[:2, :]
+U_reduced = U[:, :2]
+S_reduced = np.diag(S[:2])
+Vt_reduced = Vt[:2, :]
 
 # # # Reducir la dimensionalidad a seis
 # # U_reduced = U[:, :6]
@@ -189,19 +196,25 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 # # S_reduced = np.diag(S[:10])
 # # Vt_reduced = Vt[:10, :]
 
-# # Reconstruir la matriz
-# matriz_reconstruida = U_reduced @ S_reduced @ Vt_reduced
+# Reconstruir la matriz
+matriz_reconstruida = U_reduced @ S_reduced @ Vt_reduced
+print("matriz reconstruida: ", matriz_reconstruida)
 
-# sim_matrix_reduced = aux.eucledian_distance(10, matriz_reconstruida)
+Z, Vt = PCAinator(matriz_mediana, 2)
+print("Z: ", Z @ Vt)
 
-# # Graficar la matriz de similaridad reducida
-# plt.subplot(1, 2, 2)
-# plt.imshow(sim_matrix_reduced, cmap='hot', interpolation='nearest')
-# plt.colorbar()
-# plt.xlabel('X Axis')
-# plt.ylabel('Y Axis')
-# plt.title('Reduced Similarity Matrix')
-# plt.show()
+print(matriz_reconstruida - matriz_mediana)
+
+sim_matrix_reduced = aux.eucledian_distance(10, matriz_reconstruida)
+
+# Graficar la matriz de similaridad reducida
+plt.subplot(1, 2, 2)
+plt.imshow(sim_matrix_reduced, cmap='hot', interpolation='nearest')
+plt.colorbar()
+plt.xlabel('X Axis')
+plt.ylabel('Y Axis')
+plt.title('Reduced Similarity Matrix')
+plt.show()
 
 
 #Cuadrados minimos
