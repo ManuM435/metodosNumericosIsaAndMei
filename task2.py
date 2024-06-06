@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 import auxiliar as aux
+from auxiliar import PCAinator
 
 # Load the images and convert them into vectors
 images = []
@@ -24,12 +25,13 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 
-
-
 # # Reconstruct the images from the low-dimensional representation and visualize them
-dimensions = [2, 5, 10, 24]  # The dimensions to use for reconstruction
-# for i in range(len(data_matrix)):
-#     plt.figure(figsize=(10, 10))
+# dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
+# amountofsamples = 5
+# # Create a figure
+# fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
+
+# for i in range(amountofsamples):
 #     for j, d in enumerate(dimensions):
 #         U_reduced = U[:, :d]
 #         S_reduced = np.diag(S[:d])
@@ -38,16 +40,29 @@ dimensions = [2, 5, 10, 24]  # The dimensions to use for reconstruction
 
 #         # Visualize the reconstructed image
 #         img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
-#         plt.subplot(1, 4, j+1)
-#         plt.imshow(img_reconstructed, cmap='gray')
-#         plt.title(f'Reconstructed with d={d} dimensions')
-#     plt.suptitle(f'Image {i} Reconstruction')
-#     plt.show()
+#         axs[i, j].imshow(img_reconstructed, cmap='gray')
+#         axs[i, j].axis('off')  # Turn off the axes
 
-# Initialize the similarity matrix
-similarity_matrix = np.zeros((len(images), len(images)))
+#         # Add a label to the first subplot of each column
+#         if i == 0:
+#             axs[i, j].set_title(f'd={d}')
 
-# for d in dimensions:
+# # Add a title to the figure
+# fig.suptitle('Image Reconstruction with Different Dimensions')
+
+# # Adjust the space between subplots
+
+# plt.show()
+
+# # Add a title to the figure
+# fig.suptitle('Image Reconstruction with Different Dimensions')
+# import matplotlib.ticker as ticker
+# from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+# # Create a figure
+# fig, axs = plt.subplots(2, 2, figsize=(8, 8))
+
+# for i, d in enumerate(dimensions):
 #     # Perform a reduced SVD on the data matrix
 #     U_reduced = U[:, :d]
 #     S_reduced = np.diag(S[:d])
@@ -58,12 +73,27 @@ similarity_matrix = np.zeros((len(images), len(images)))
 #     similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
 
 #     # Visualize the similarity matrix
-#     plt.figure(figsize=(10, 10))
-#     plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
-#     plt.colorbar(label='Similarity')
-#     plt.title(f'Similarity Matrix (d={d})')
-#     plt.show()
+#     ax = axs[i//2, i%2]
+#     im = ax.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
+#     ax.set_title(f'Similarity Matrix (d={d})')
 
+#     # Set x and y labels
+#     ax.set_xlabel('Sample Number')
+#     ax.set_ylabel('Sample Number')
+
+#     # Set x and y ticks to be integers
+#     ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+#     ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+
+#     # Create an axes on the right side of ax. The width of cax will be 5%
+#     # of ax and the padding between cax and ax will be fixed at 0.05 inch.
+#     divider = make_axes_locatable(ax)
+#     cax = divider.append_axes("right", size="5%", pad=0.05)
+
+#     fig.colorbar(im, cax=cax, label='Similarity')
+
+# plt.tight_layout()
+# plt.show()
 # # Set the dimension to 24
 # d = 24
 
@@ -104,7 +134,7 @@ similarity_matrix = np.zeros((len(images), len(images)))
 
 
 
-# 2.4
+# # 2.4
 
 
 def frobeniusNorm(X):
@@ -179,30 +209,30 @@ plt.grid(axis='x')  # Add vertical grid lines
 plt.show()
 
 
-# DUDAS Y PENDIENTES
-# Ver como calcular el peso en el 1.3
-# A que se refiere el 10%
-# Matriz entera reducir la dimensionalidad o imagen por imagen
-# Utilizando esta ultima representación aprendida con el dataset 2 
-#   ¿Qué error de reconstrucción obtienen si utilizan la misma 
-#   compresión (con la misma base de d dimensiones obtenida del dataset 2) para 
-#   las imagenes dataset_imagenes1.zip?
-# Ver lo de Z= US producto punto
-# Que es lo de z = Vt @ x
-# Cuando dice PCA, que hacemos?
 
 
-ladimen = 7
+ladimension = 7
 
-# Compression of Dataset 1
-U_reduced2 = U[:, :ladimen]
-S_reduced2 = np.diag(S[:ladimen])
-Vt_reduced2 = Vt[:ladimen, :]
-V_reduced2 = Vt_reduced2.T
+# Aprender una representacion (plotear Vt)
 
-data_matrix_preds = data_matrix @ V_reduced2 @ Vt_reduced2
+# Get the shape of the original images
+img_shape = np.array(img).shape
 
-errorRecon = round(frobeniusNorm(data_matrix - data_matrix_preds) / frobeniusNorm(data_matrix) * 100, 2)
-print(f"Approximation Error is: {errorRecon}%")
+# Plot the first three eigenvectors
+fig, axs = plt.subplots(1, 3, figsize=(15, 5))
 
+for i in range(3):
+    # Reshape the eigenvector to have the same shape as the original images
+    eigenvector_img = Vt[i].reshape(img_shape)
 
+    # Normalize the eigenvector image for better visualization
+    eigenvector_img = (eigenvector_img - np.min(eigenvector_img)) / (np.max(eigenvector_img) - np.min(eigenvector_img))
+
+    # Plot the eigenvector image
+    axs[i].imshow(eigenvector_img, cmap='gray')
+    axs[i].set_title(f'Autovector {i+1}')
+    axs[i].axis('off')
+
+fig.suptitle('Primeros tres autovectores de Vt representados como imágenes')
+
+plt.show()

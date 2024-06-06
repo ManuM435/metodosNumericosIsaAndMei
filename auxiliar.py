@@ -12,3 +12,13 @@ def eucledian_distance(sigma, matrix):
             distancia = math.sqrt(sum((matrix[i][k] - matrix[j][k]) ** 2 for k in range(len(matrix[i]))))
             matriz_similaridad[i][j] = expoDist(distancia, sigma)
     return matriz_similaridad
+
+
+def PCAinator(Matriz, Dimensions):
+    U, S, Vt = np.linalg.svd(Matriz, full_matrices=False)
+    U_reduced = U[:, :Dimensions]
+    S_reduced = np.diag(S[:Dimensions])
+    matrix_reduced = np.dot(U_reduced, S_reduced)
+
+    return matrix_reduced, Vt[:Dimensions, :]
+
