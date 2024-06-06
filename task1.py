@@ -39,7 +39,7 @@ def PCAinator(Matriz, Dimensions):
     S_reduced = np.diag(S[:Dimensions])
     matrix_reduced = np.dot(U_reduced, S_reduced)
 
-    return matrix_reduced
+    return matrix_reduced, Vt[:Dimensions, :]
 
 
 def pseudoinvCalculatorInator(X):
@@ -135,30 +135,33 @@ plt.show()
 
 # # Generar el gráfico de dispersión
 
-# Z, vt = PCAinator(matriz_mediana, 2)
-# plt.figure(figsize=(10, 5))
-# plt.scatter(Z[:, 0], Z[:, 1])
-# plt.title('Proyección de los datos en los dos primeros autovectores')
-# plt.xlabel('Autovector 1')
-# plt.ylabel('Autovector 2')
-# plt.show()
+labels = np.loadtxt('y.txt')
+
+Z, vt = PCAinator(matriz_mediana, 2)
+plt.figure(figsize=(10, 5))
+plt.scatter(Z[:, 0], Z[:, 1], c=labels, cmap='hot')
+plt.title('Proyección de los datos en los dos primeros autovectores')
+plt.xlabel('Autovector 1')
+plt.ylabel('Autovector 2')
+plt.show()
 
 
-# # # Para PCA y Dispersion 3D
-# # U_reducida3 = U[:, :3]
-# # S_reducida3 = np.diag(S[:3])
-# # Vt_reducida3 = Vt[:3, :]
+# # Para PCA y Dispersion 3D
+U_reducida3 = U[:, :3]
+S_reducida3 = np.diag(S[:3])
+Vt_reducida3 = Vt[:3, :]
 
 
-# # # Grafico de Dispersion 3D (PCA)
-# # fig = plt.figure(figsize=(10, 5))
-# # ax = fig.add_subplot(111, projection='3d')
-# # ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
-# # ax.set_title('Proyección de los datos en los tres primeros autovectores')
-# # ax.set_xlabel('Autovector 1')
-# # ax.set_ylabel('Autovector 2')
-# # ax.set_zlabel('Autovector 3')
-# # plt.show()
+# Grafico de Dispersion 3D (PCA)
+Z3, vt = PCAinator(matriz_mediana, 3)
+fig = plt.figure(figsize=(10, 5))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(Z3[:, 0], Z3[:, 1], Z3[:, 2], c=labels, cmap= 'hot')
+ax.set_title('Proyección de los datos en los tres primeros autovectores')
+ax.set_xlabel('Autovector 1')
+ax.set_ylabel('Autovector 2')
+ax.set_zlabel('Autovector 3')
+plt.show()
 
 
 

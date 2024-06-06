@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 import auxiliar as aux
+from auxiliar import PCAinator
 
 # Load the images and convert them into vectors
 images = []
@@ -28,72 +29,72 @@ p = int(np.sqrt(images[0].shape[0]))
 
 # # Reconstruct the images from the low-dimensional representation and visualize them
 dimensions = [2, 5, 10, 24]  # The dimensions to use for reconstruction
-# for i in range(len(data_matrix)):
-#     plt.figure(figsize=(10, 10))
-#     for j, d in enumerate(dimensions):
-#         U_reduced = U[:, :d]
-#         S_reduced = np.diag(S[:d])
-#         Vt_reduced = Vt[:d, :]
-#         matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
+for i in range(len(data_matrix)):
+    plt.figure(figsize=(10, 10))
+    for j, d in enumerate(dimensions):
+        U_reduced = U[:, :d]
+        S_reduced = np.diag(S[:d])
+        Vt_reduced = Vt[:d, :]
+        matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
 
-#         # Visualize the reconstructed image
-#         img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
-#         plt.subplot(1, 4, j+1)
-#         plt.imshow(img_reconstructed, cmap='gray')
-#         plt.title(f'Reconstructed with d={d} dimensions')
-#     plt.suptitle(f'Image {i} Reconstruction')
-#     plt.show()
+        # Visualize the reconstructed image
+        img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
+        plt.subplot(1, 4, j+1)
+        plt.imshow(img_reconstructed, cmap='gray')
+        plt.title(f'Reconstructed with d={d} dimensions')
+    plt.suptitle(f'Image {i} Reconstruction')
+    plt.show()
 
 # Initialize the similarity matrix
 similarity_matrix = np.zeros((len(images), len(images)))
 
-# for d in dimensions:
-#     # Perform a reduced SVD on the data matrix
-#     U_reduced = U[:, :d]
-#     S_reduced = np.diag(S[:d])
-#     Vt_reduced = Vt[:d, :]
-#     data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+for d in dimensions:
+    # Perform a reduced SVD on the data matrix
+    U_reduced = U[:, :d]
+    S_reduced = np.diag(S[:d])
+    Vt_reduced = Vt[:d, :]
+    data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
 
-#     # Initialize the similarity matrix
-#     similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
+    # Initialize the similarity matrix
+    similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
 
-#     # Visualize the similarity matrix
-#     plt.figure(figsize=(10, 10))
-#     plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
-#     plt.colorbar(label='Similarity')
-#     plt.title(f'Similarity Matrix (d={d})')
-#     plt.show()
+    # Visualize the similarity matrix
+    plt.figure(figsize=(10, 10))
+    plt.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
+    plt.colorbar(label='Similarity')
+    plt.title(f'Similarity Matrix (d={d})')
+    plt.show()
 
-# # Set the dimension to 24
-# d = 24
+# Set the dimension to 24
+d = 24
 
-# # Perform a reduced SVD on the data matrix
-# U_reduced = U[:, :d]
-# S_reduced = np.diag(S[:d])
-# Vt_reduced = Vt[:d, :]
-# data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+# Perform a reduced SVD on the data matrix
+U_reduced = U[:, :d]
+S_reduced = np.diag(S[:d])
+Vt_reduced = Vt[:d, :]
+data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
 
-# # Initialize a figure
-# fig, axs = plt.subplots(4, 5, figsize=(10, 10))
+# Initialize a figure
+fig, axs = plt.subplots(4, 5, figsize=(10, 10))
 
-# # Flatten the axes
-# axs = axs.flatten()
+# Flatten the axes
+axs = axs.flatten()
 
-# # Loop over each image
-# for i in range(len(data_matrix_reduced)):
-#     # Reconstruct the image
-#     img_reconstructed = data_matrix_reduced[i].reshape((p, p))  # Assuming the images are size p x p
+# Loop over each image
+for i in range(len(data_matrix_reduced)):
+    # Reconstruct the image
+    img_reconstructed = data_matrix_reduced[i].reshape((p, p))  # Assuming the images are size p x p
 
-#     # Add the image to the plot
-#     axs[i].imshow(img_reconstructed, cmap='gray')
-#     axs[i].axis('off')  # Hide the axes
+    # Add the image to the plot
+    axs[i].imshow(img_reconstructed, cmap='gray')
+    axs[i].axis('off')  # Hide the axes
 
-# # Remove the last unused subplot
-# fig.delaxes(axs[-1])
+# Remove the last unused subplot
+fig.delaxes(axs[-1])
 
-# # Show the plot
-# plt.suptitle('All Images at d=24')
-# plt.show()
+# Show the plot
+plt.suptitle('All Images at d=24')
+plt.show()
 
 
 
@@ -206,3 +207,26 @@ errorRecon = round(frobeniusNorm(data_matrix - data_matrix_preds) / frobeniusNor
 print(f"Approximation Error is: {errorRecon}%")
 
 
+# Aprender una representacion (plotear Vt)
+
+# Get the shape of the original images
+img_shape = np.array(img).shape
+
+# Plot the first three eigenvectors
+fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+
+for i in range(3):
+    # Reshape the eigenvector to have the same shape as the original images
+    eigenvector_img = Vt[i].reshape(img_shape)
+
+    # Normalize the eigenvector image for better visualization
+    eigenvector_img = (eigenvector_img - np.min(eigenvector_img)) / (np.max(eigenvector_img) - np.min(eigenvector_img))
+
+    # Plot the eigenvector image
+    axs[i].imshow(eigenvector_img, cmap='gray')
+    axs[i].set_title(f'Autovector {i+1}')
+    axs[i].axis('off')
+
+fig.suptitle('Primeros tres autovectores de Vt representados como imágenes')
+
+plt.show()
