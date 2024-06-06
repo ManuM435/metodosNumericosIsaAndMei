@@ -39,7 +39,7 @@ def PCAinator(Matriz, Dimensions):
     S_reduced = np.diag(S[:Dimensions])
     matrix_reduced = np.dot(U_reduced, S_reduced)
 
-    return matrix_reduced, Vt[:Dimensions, :]
+    return matrix_reduced
 
 
 def pseudoinvCalculatorInator(X):
@@ -144,105 +144,37 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 # # # Generar el gráfico de dispersión
 
-# Z, vt = PCAinator(matriz_mediana, 2)
-# plt.figure(figsize=(10, 5))
-# plt.scatter(Z[:, 0], Z[:, 1])
-# plt.title('Proyección de los datos en los dos primeros autovectores')
-# plt.xlabel('Autovector 1')
-# plt.ylabel('Autovector 2')
-# plt.show()
-
-
-# # # Para PCA y Dispersion 3D
-# # U_reducida3 = U[:, :3]
-# # S_reducida3 = np.diag(S[:3])
-# # Vt_reducida3 = Vt[:3, :]
-
-
-# # # Grafico de Dispersion 3D (PCA)
-# # fig = plt.figure(figsize=(10, 5))
-# # ax = fig.add_subplot(111, projection='3d')
-# # ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
-# # ax.set_title('Proyección de los datos en los tres primeros autovectores')
-# # ax.set_xlabel('Autovector 1')
-# # ax.set_ylabel('Autovector 2')
-# # ax.set_zlabel('Autovector 3')
+# # Z, vt = PCAinator(matriz_mediana, 2)
+# # plt.figure(figsize=(10, 5))
+# # plt.scatter(Z[:, 0], Z[:, 1])
+# # plt.title('Proyección de los datos en los dos primeros autovectores')
+# # plt.xlabel('Autovector 1')
+# # plt.ylabel('Autovector 2')
 # # plt.show()
 
-# Generar el diccionario
-dict_autovector = {i: v for i, v in enumerate(Vt[0])}
 
-# Ordenar el diccionario de mayor a menor
-dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
-
-<<<<<<< Updated upstream
-=======
-# Imprimir el diccionario ordenado
-for key, value in dict_autovector_ordenado.items():
-    print(f'Índice: {key}, Valor: {value}')
-
-# Crear un gráfico de barras de los valores
-plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
-plt.title('Valores del primer autovector')
-plt.show()
-
-# Reducir la dimensionalidad a dos
-
-U_reduced = U[:, :2]
-S_reduced = np.diag(S[:2])
-Vt_reduced = Vt[:2, :]
-
-# # # Reducir la dimensionalidad a seis
-# # U_reduced = U[:, :6]
-# # S_reduced = np.diag(S[:6])
-# # Vt_reduced = Vt[:6, :]
-
-# # # Reducir la dimensionalidad a diez
-# # U_reduced = U[:, :10]
-# # S_reduced = np.diag(S[:10])
-# # Vt_reduced = Vt[:10, :]
-
-# Reconstruir la matriz
-matriz_reconstruida = U_reduced @ S_reduced @ Vt_reduced
-print("matriz reconstruida: ", matriz_reconstruida)
-
-Z, Vt = PCAinator(matriz_mediana, 2)
-print("Z: ", Z @ Vt)
-
-print(matriz_reconstruida - matriz_mediana)
-
-sim_matrix_reduced = aux.eucledian_distance(10, matriz_reconstruida)
-
-# # Graficar la matriz de similaridad reducida
-# plt.subplot(1, 2, 2)
-# plt.imshow(sim_matrix_reduced, cmap='hot', interpolation='nearest')
-# plt.colorbar()
-# plt.xlabel('X Axis')
-# plt.ylabel('Y Axis')
-# plt.title('Reduced Similarity Matrix')
-# plt.show()
+# # # # Para PCA y Dispersion 3D
+# # # U_reducida3 = U[:, :3]
+# # # S_reducida3 = np.diag(S[:3])
+# # # Vt_reducida3 = Vt[:3, :]
 
 
-#Cuadrados minimos
-
-# # Create a dictionary to store the order of values in beta
-# beta_order = {}
-
-# # Iterate over the values in beta and store their order in the dictionary
-# for i, value in enumerate(beta):
-#     beta_order[i+1] = abs(value)
-
-# # Sort the dictionary by the absolute values of the values in descending order
-# beta_order = {k: v for k, v in sorted(beta_order.items(), key=lambda item: item[1], reverse=True)}
-
-# # Print the dictionary
-# print(beta_order)
->>>>>>> Stashed changes
+# # # # Grafico de Dispersion 3D (PCA)
+# # # fig = plt.figure(figsize=(10, 5))
+# # # ax = fig.add_subplot(111, projection='3d')
+# # # ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
+# # # ax.set_title('Proyección de los datos en los tres primeros autovectores')
+# # # ax.set_xlabel('Autovector 1')
+# # # ax.set_ylabel('Autovector 2')
+# # # ax.set_zlabel('Autovector 3')
+# # # plt.show()
 
 
 
 
-<<<<<<< Updated upstream
+
+
+
 
 
 
@@ -254,39 +186,26 @@ sim_matrix_reduced = aux.eucledian_distance(10, matriz_reconstruida)
 # Cuadrados minimos
 
 # Create a 3D plot
-=======
-# # Create a 3D plot
->>>>>>> Stashed changes
 
-# datos = matriz_mediana
-# labels = y - np.mean(y)
+datos = matriz_mediana
+labels = y - np.mean(y)
 
-<<<<<<< Updated upstream
 def pseudoinvCalculatorInator(X):
     U, S, Vt = np.linalg.svd(X, full_matrices=False)
     S_inv = np.diag([1/S if S != 0 else 0 for S in S])
     X_pseudoinverse = Vt.T @ S_inv @ U.T
     return X_pseudoinverse
-=======
-
-# def pseudoinvCalculatorInator(X):
-#     U, S, Vt = np.linalg.svd(X, full_matrices=False)
-#     S_inv = np.diag([1/S if S != 0 else 0 for S in S])
-#     X_pseudoinverse = Vt.T @ S_inv @ U.T
-#     return X_pseudoinverse
->>>>>>> Stashed changes
 
 
-# def hyperPlanePlotInator(data, labels, dimensions):
-#     reduced_mat = PCAinator(data, dimensions)
-#     pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
-#     beta = pseudoinverse @ labels
+def hyperPlanePlotInator(data, labels, dimensions):
+    reduced_mat = PCAinator(data, dimensions)
+    pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
+    beta = pseudoinverse @ labels
 
-#     grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
-#                      np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
-#     grid_z =  grid_x * beta[0] + grid_y * beta[1]
+    grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
+                     np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
+    grid_z =  grid_x * beta[0] + grid_y * beta[1]
 
-<<<<<<< Updated upstream
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111, projection='3d')
     scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, c=labels, cmap='hot')
@@ -298,26 +217,13 @@ def pseudoinvCalculatorInator(X):
     ax.set_zlabel('Labels')
     ax.set_title('Aproximación con Cuadrados Minimos')
     plt.show()
-=======
-#     # fig = plt.figure(figsize=(10, 7))
-#     # ax = fig.add_subplot(111, projection='3d')
-#     # scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, color='b')
-#     # plt.colorbar(scatter)
-
-#     # ax.plot_surface(grid_x, grid_y, grid_z, color='r', alpha=0.5)
-#     # ax.set_xlabel('AV 1')
-#     # ax.set_ylabel('AV 2')
-#     # ax.set_zlabel('Labels')
-#     # ax.set_title('el grafiquinho del hiperplaninho')
-#     # plt.show()
->>>>>>> Stashed changes
 
     
-#     error = np.linalg.norm(reduced_mat @ beta - labels)
-#     return error
+    error = np.linalg.norm(reduced_mat @ beta - labels)
+    return error
 
 
-# hyperPlanePlotInator(matriz_mediana, labels, 2)
+hyperPlanePlotInator(matriz_mediana, labels, 2)
 
 # # Trying Different Dimensions
 
@@ -330,17 +236,10 @@ def pseudoinvCalculatorInator(X):
 
 # # Plot the errors
 # plt.figure(figsize=(10, 7))
-<<<<<<< Updated upstream
 # plt.plot(range(2, max_dim), errors, marker='o', color='maroon')
-=======
-# plt.plot(range(2, max_dim), errors, marker='o')
->>>>>>> Stashed changes
 # plt.xlabel('Dimensions')
 # plt.ylabel('Error')
 # plt.title('Error by Dimensions')
 # plt.grid()
-<<<<<<< Updated upstream
 # plt.ylim(0, 1400)
-=======
->>>>>>> Stashed changes
 # plt.show()
