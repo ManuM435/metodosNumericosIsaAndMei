@@ -114,6 +114,8 @@ plt.show()
 
 
 
+# Apendice 1.3
+
 # Generar el diccionario
 dict_autovector = {i: abs(v) for i, v in enumerate(Vt[0])}
 
