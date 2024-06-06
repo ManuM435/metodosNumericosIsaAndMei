@@ -197,6 +197,7 @@ matriz_reconstruida2 = U_reduced2 @ S_reduced2 @ Vt_reduced2
 matriz_reconstruida6 = U_reduced6 @ S_reduced6 @ Vt_reduced6
 matriz_reconstruida10 = U_reduced10 @ S_reduced10 @ Vt_reduced10
 
+
 sigm = 20
 
 matriz_simil2 = aux.eucledian_distance(sigm, matriz_reconstruida2)
@@ -204,33 +205,38 @@ matriz_simil6 = aux.eucledian_distance(sigm, matriz_reconstruida6)
 matriz_simil10 = aux.eucledian_distance(sigm, matriz_reconstruida10)
 matriz_simil106 = aux.eucledian_distance(sigm, matriz_mediana)
 
+
+
+
+
+
 # Create a 2x2 figure with the 4 matriz_simil subplots
-fig, axs = plt.subplots(2, 2, figsize=(10, 10))
+fig, axs = plt.subplots(2, 2, figsize=(12, 12))
 
 # Set the spacing between subplots
-fig.subplots_adjust(hspace=0.5, wspace=0.5)
+fig.subplots_adjust(hspace=0.8, wspace=0.5)
 
 # Plot matriz_simil2
 axs[0, 0].imshow(matriz_simil2, cmap='hot', interpolation='nearest')
-axs[0, 0].set_title('Matriz Similaridad (d=2)')
+axs[0, 0].set_title('Similarity Matrix (d=2)')
 axs[0, 0].set_xlabel('Sample Number')
 axs[0, 0].set_ylabel('Sample Number')
 
 # Plot matriz_simil6
 axs[0, 1].imshow(matriz_simil6, cmap='hot', interpolation='nearest')
-axs[0, 1].set_title('Matriz Similaridad (d=6)')
+axs[0, 1].set_title('Similarity Matrix (d=6)')
 axs[0, 1].set_xlabel('Sample Number')
 axs[0, 1].set_ylabel('Sample Number')
 
 # Plot matriz_simil10
 axs[1, 0].imshow(matriz_simil10, cmap='hot', interpolation='nearest')
-axs[1, 0].set_title('Matriz Similaridad (d=2)')
+axs[1, 0].set_title('Similarity Matrix (d=10)')
 axs[1, 0].set_xlabel('Sample Number')
 axs[1, 0].set_ylabel('Sample Number')
 
 # Plot matriz_simil106
 axs[1, 1].imshow(matriz_simil106, cmap='hot', interpolation='nearest')
-axs[1, 1].set_title('Matriz Similaridad (Original, d=106)')
+axs[1, 1].set_title('Similarity Matrix (Original, d=106)')
 axs[1, 1].set_xlabel('Sample Number')
 axs[1, 1].set_ylabel('Sample Number')
 
