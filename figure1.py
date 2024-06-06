@@ -207,6 +207,9 @@ matriz_simil106 = aux.eucledian_distance(sigm, matriz_mediana)
 # Create a 2x2 figure with the 4 matriz_simil subplots
 fig, axs = plt.subplots(2, 2, figsize=(10, 10))
 
+# Set the spacing between subplots
+fig.subplots_adjust(hspace=0.5, wspace=0.5)
+
 # Plot matriz_simil2
 axs[0, 0].imshow(matriz_simil2, cmap='hot', interpolation='nearest')
 axs[0, 0].set_title('Matriz Similaridad (d=2)')
@@ -236,6 +239,10 @@ plt.tight_layout()
 
 # Show the figure
 plt.show()
+
+
+
+
 
 # #Cuadrados minimos
 
