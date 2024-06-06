@@ -72,14 +72,14 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 
 
-def reducedSimilarityMatrixer(sigma, originalMatrix, dimensions):
-    U, S, Vt = np.linalg.svd(originalMatrix, full_matrices=False)
-    U_reduced = U[:, :dimensions]
-    S_reduced = np.diag(S[:dimensions])
-    Vt_reduced = Vt[:dimensions, :]
-    matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
-    similarity_matrix_reduced = aux.eucledian_distance(sigma, matrix_reduced)
-    return similarity_matrix_reduced
+# def reducedSimilarityMatrixer(sigma, originalMatrix, dimensions):
+#     U, S, Vt = np.linalg.svd(originalMatrix, full_matrices=False)
+#     U_reduced = U[:, :dimensions]
+#     S_reduced = np.diag(S[:dimensions])
+#     Vt_reduced = Vt[:dimensions, :]
+#     matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+#     similarity_matrix_reduced = aux.eucledian_distance(sigma, matrix_reduced)
+#     return similarity_matrix_reduced
 
 # Plot similarity matrices with different dimensions
 dimensions_list = [2, 6, 10, 106]
@@ -91,7 +91,7 @@ theSigma = 50
 #     plt.colorbar()
 #     plt.xlabel('X Axis')
 #     plt.ylabel('Y Axis')
-#     plt.title(f'Similarity Matrix with {dimensions} Dimensions')
+#     plt.title(f'Similarity Matrix with Different Dimensio Dimensions')
 #     plt.show()
 
 
@@ -124,7 +124,9 @@ dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item:
 
 # Crear un gráfico de barras de los valores
 plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
-plt.title('Valores absolutos de cada columna en primera fila de Vt')
+plt.title('Valores (en módulo) de cada feature en el primer autovector de Vt')
+plt.xlabel('Número de la feature')
+plt.ylabel('Valor del autovector')
 plt.show()
 
 
