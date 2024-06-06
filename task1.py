@@ -100,33 +100,30 @@ theSigma = 50
 
 
 
-# # Down Here van Valores Singulares (Barritas que muestran la significancia de los valores de d) y PCA (Dispersion 3D) 
 
  # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
-# # Grafico de Significancia de Dimensiones
-# plt.figure(figsize=(10, 5))
-# plt.bar(range(1, len(S) + 1), S)
-# plt.title('Valores singulares de la matriz S')
-# plt.xlabel('Índice del valor singular')
-# plt.ylabel('Valor del valor singular')
-# plt.show()
-
-# # Calculate the total sum of eigen values in S
-# total_sum = sum(S)
-
-# # Calculate the sum of the first two eigen values in S
-# first_two_sum = sum(S[:2])
-
-# # Calculate the percentage represented by the first two eigen values
-# percentage = (first_two_sum / total_sum) * 100
-
-# # Print the percentage
-# print(f"The first two eigen values represent {percentage:.2f}% of the total sum.")
+# Grafico de Significancia de Dimensiones para SVD
+plt.figure(figsize=(10, 5))
+plt.bar(range(1, len(S) + 1), S)
+plt.title('Valores singulares de la matriz S')
+plt.xlabel('Índice del valor singular')
+plt.ylabel('Valor del valor singular')
+plt.show()
 
 
 
+# Generar el diccionario
+dict_autovector = {i: abs(v) for i, v in enumerate(Vt[0])}
+
+# Ordenar el diccionario de mayor a menor
+dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
+
+# Crear un gráfico de barras de los valores
+plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
+plt.title('Valores absolutos de cada columna en primera fila de Vt')
+plt.show()
 
 
 
@@ -162,39 +159,8 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 
 
-# # # Estos de abajo son graficos para Apendice 1.3 y 1.4 # # #
 
-# Generar el diccionario
-dict_autovector = {i: abs(v) for i, v in enumerate(Vt[0])}
 
-# Ordenar el diccionario de mayor a menor
-dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
-
-# Crear un gráfico de barras de los valores
-plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
-plt.title('Valores absolutos del primer autovector')
-plt.show()
-
-# Create a dictionary to store the order of values in beta
-beta_order = {}
-beta = pseudoinvCalculatorInator(matriz_mediana) @ y
-
-# Iterate over the values in beta and store their order in the dictionary
-for i, value in enumerate(beta):
-    beta_order[i+1] = abs(value)
-
-# Sort the dictionary by the absolute values of the values in descending order
-beta_order = {k: v for k, v in sorted(beta_order.items(), key=lambda item: item[1], reverse=True)}
-
-# Plot
-plt.figure(figsize=(10, 5))
-plt.bar(beta_order.keys(), beta_order.values())
-plt.title('Values of beta')
-plt.xlabel('Index')
-plt.ylabel('Value')
-plt.show()
-
-# # # Estos de arriba son graficos para Apendice 1.3 y 1.4 # # #
 
 
 
