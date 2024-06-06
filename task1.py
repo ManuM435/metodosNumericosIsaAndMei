@@ -51,7 +51,8 @@ def pseudoinvCalculatorInator(X):
 # Calcular Matriz Mediana
 matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
-
+# Descomposición SVD
+U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 # # Esto es para graficar la matriz original
 # # Calcular el factor de zoom para cada dimensión
@@ -106,14 +107,78 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 # plt.show()
 
 
+# U_reduced2 = U[:, :2]
+# S_reduced2 = np.diag(S[:2])
+# Vt_reduced2 = Vt[:2, :]
+
+# # Reducir la dimensionalidad a seis
+# U_reduced6 = U[:, :6]
+# S_reduced6 = np.diag(S[:6])
+# Vt_reduced6 = Vt[:6, :]
+
+# # Reducir la dimensionalidad a diez
+# U_reduced10 = U[:, :10]
+# S_reduced10 = np.diag(S[:10])
+# Vt_reduced10 = Vt[:10, :]
+
+
+# matriz_reconstruida2 = U_reduced2 @ S_reduced2 @ Vt_reduced2
+# matriz_reconstruida6 = U_reduced6 @ S_reduced6 @ Vt_reduced6
+# matriz_reconstruida10 = U_reduced10 @ S_reduced10 @ Vt_reduced10
+
+
+# sigm = 20
+
+# matriz_simil2 = aux.eucledian_distance(sigm, matriz_reconstruida2)
+# matriz_simil6 = aux.eucledian_distance(sigm, matriz_reconstruida6)
+# matriz_simil10 = aux.eucledian_distance(sigm, matriz_reconstruida10)
+# matriz_simil106 = aux.eucledian_distance(sigm, matriz_mediana)
 
 
 
 
 
 
-# # Descomposición SVD
-# U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
+# # Create a 2x2 figure with the 4 matriz_simil subplots
+# fig, axs = plt.subplots(2, 2, figsize=(8, 8))
+
+# # Plot matriz_simil2
+# axs[0, 0].imshow(matriz_simil2, cmap='hot', interpolation='nearest')
+# axs[0, 0].set_title('Similarity Matrix (d=2)')
+# axs[0, 0].set_xlabel('Sample Number')
+# axs[0, 0].set_ylabel('Sample Number')
+
+# # Plot matriz_simil6
+# axs[0, 1].imshow(matriz_simil6, cmap='hot', interpolation='nearest')
+# axs[0, 1].set_title('Similarity Matrix (d=6)')
+# axs[0, 1].set_xlabel('Sample Number')
+# axs[0, 1].set_ylabel('Sample Number')
+
+# # Plot matriz_simil10
+# axs[1, 0].imshow(matriz_simil10, cmap='hot', interpolation='nearest')
+# axs[1, 0].set_title('Similarity Matrix (d=10)')
+# axs[1, 0].set_xlabel('Sample Number')
+# axs[1, 0].set_ylabel('Sample Number')
+
+# # Plot matriz_simil106
+# axs[1, 1].imshow(matriz_simil106, cmap='hot', interpolation='nearest')
+# axs[1, 1].set_title('Similarity Matrix (Original, d=106)')
+# axs[1, 1].set_xlabel('Sample Number')
+# axs[1, 1].set_ylabel('Sample Number')
+
+# # Adjust the spacing between subplots
+# plt.tight_layout()
+
+# # Show the figure
+# plt.show()
+
+
+
+
+
+
+
+
 
 # # Grafico de Significancia de Dimensiones para SVD
 # plt.figure(figsize=(10, 5))
@@ -206,40 +271,42 @@ def hyperPlanePlotInator(data, labels, dimensions):
                      np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
     grid_z =  grid_x * beta[0] + grid_y * beta[1]
 
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, c=labels, cmap='hot')
-    plt.colorbar(scatter)
+    # fig = plt.figure(figsize=(10, 7))
+    # ax = fig.add_subplot(111, projection='3d')
+    # scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, c=labels, cmap='hot')
+    # plt.colorbar(scatter)
 
-    ax.plot_surface(grid_x, grid_y, grid_z, color='forestgreen', alpha=0.5)
-    ax.set_xlabel('Autovector 1')
-    ax.set_ylabel('Autovector 2')
-    ax.set_zlabel('Labels')
-    ax.set_title('Aproximación con Cuadrados Minimos')
-    plt.show()
+
+
+    # ax.plot_surface(grid_x, grid_y, grid_z, color='forestgreen', alpha=0.5)
+    # ax.set_xlabel('Autovector 1')
+    # ax.set_ylabel('Autovector 2')
+    # ax.set_zlabel('Labels')
+    # ax.set_title('Aproximación con Cuadrados Minimos')
+    # plt.show()
 
     
     error = np.linalg.norm(reduced_mat @ beta - labels)
     return error
 
 
-hyperPlanePlotInator(matriz_mediana, labels, 2)
+# hyperPlanePlotInator(matriz_mediana, labels, 2)
 
-# # Trying Different Dimensions
+# Trying Different Dimensions
 
-# max_dim = 107
+max_dim = 107
 
-# errors = []
-# for i in range(2, max_dim):
-#     topa = hyperPlanePlotInator(matriz_mediana, labels, i)
-#     errors.append(topa)
+errors = []
+for i in range(2, max_dim):
+    topa = hyperPlanePlotInator(matriz_mediana, labels, i)
+    errors.append(topa)
 
-# # Plot the errors
-# plt.figure(figsize=(10, 7))
-# plt.plot(range(2, max_dim), errors, marker='o', color='maroon')
-# plt.xlabel('Dimensions')
-# plt.ylabel('Error')
-# plt.title('Error by Dimensions')
-# plt.grid()
-# plt.ylim(0, 1400)
-# plt.show()
+# Plot the errors
+plt.figure(figsize=(10, 7))
+plt.plot(range(2, max_dim), errors, marker='o', color='maroon')
+plt.xlabel('Dimensions')
+plt.ylabel('Error')
+plt.title('Error by Dimensions')
+plt.grid()
+plt.ylim(0, 1400)
+plt.show()
