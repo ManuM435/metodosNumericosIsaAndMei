@@ -26,10 +26,11 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 # # Reconstruct the images from the low-dimensional representation and visualize them
-# dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
-# amountofsamples = 5
+dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
+amountofsamples = 5
 # # Create a figure
-# fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
+fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
+
 
 for i in range(amountofsamples):
     for j, d in enumerate(dimensions):
@@ -38,10 +39,10 @@ for i in range(amountofsamples):
         Vt_reduced = Vt[:d, :]
         matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
 
-#         # Visualize the reconstructed image
-#         img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
-#         axs[i, j].imshow(img_reconstructed, cmap='gray')
-#         axs[i, j].axis('off')  # Turn off the axes
+        # Visualize the reconstructed image
+        img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
+        axs[i, j].imshow(img_reconstructed, cmap='gray')
+        axs[i, j].axis('off')  # Turn off the axes
 
         # Add a label to the first subplot of each column
         if i == 0:
