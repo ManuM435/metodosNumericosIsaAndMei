@@ -3,7 +3,6 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 import auxiliar as aux
-from auxiliar import PCAinator
 
 # Load the images and convert them into vectors
 images = []
@@ -12,17 +11,30 @@ for filename in os.listdir('datasets_imgs'):
     img_vector = np.array(img).flatten()
     images.append(img_vector)
 
-# Stack the vectors to form a data matrix
 data_matrix = np.vstack(images)
-
-# Perform a singular value decomposition (SVD) on the data matrix
 U, S, Vt = np.linalg.svd(data_matrix, full_matrices=False)
 
-# Get the dimension of the images (assuming they are square)
+# dimensiones de las imagenes
 p = int(np.sqrt(images[0].shape[0]))
 
 
+# Get the shape of the original images
+img_shape = np.array(img).shape
 
+# Plot the first three eigenvectors
+fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+
+for i in range(3):
+    # Reshape and normalize eigenvector
+    eigenvector_img = Vt[i].reshape(img_shape)
+    eigenvector_img = (eigenvector_img - np.min(eigenvector_img)) / (np.max(eigenvector_img) - np.min(eigenvector_img))
+
+    axs[i].imshow(eigenvector_img, cmap='gray')
+    axs[i].set_title(f'Autovector {i+1}')
+    axs[i].axis('off')
+
+fig.suptitle('Primeros tres autovectores de Vt representados como imágenes')
+plt.show()
 
 
 # # Reconstruct the images from the low-dimensional representation and visualize them
@@ -95,38 +107,36 @@ for i, d in enumerate(dimensions):
 
 plt.tight_layout(h_pad=0.5)  # Adjust the horizontal space between subplots
 plt.show()
-# # Set the dimension to 24
-# d = 24
-
-# # Perform a reduced SVD on the data matrix
-# U_reduced = U[:, :d]
-# S_reduced = np.diag(S[:d])
-# Vt_reduced = Vt[:d, :]
-# data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
-
-# # Initialize a figure
-# fig, axs = plt.subplots(4, 5, figsize=(10, 10))
-
-# # Flatten the axes
-# axs = axs.flatten()
-
-# # Loop over each image
-# for i in range(len(data_matrix_reduced)):
-#     # Reconstruct the image
-#     img_reconstructed = data_matrix_reduced[i].reshape((p, p))  # Assuming the images are size p x p
-
-#     # Add the image to the plot
-#     axs[i].imshow(img_reconstructed, cmap='gray')
-#     axs[i].axis('off')  # Hide the axes
-
-# # Remove the last unused subplot
-# fig.delaxes(axs[-1])
-
-# # Show the plot
-# plt.suptitle('All Images at d=24')
-# plt.show()
 
 
+
+# Perform a reduced SVD on the data matrix
+U_ogSize = U[:, :24]
+S_ogSize = np.diag(S[:24])
+Vt_ogSize = Vt[:24, :]
+data_matrix_ogSize = U_ogSize @ S_ogSize @ Vt_ogSize
+
+# Initialize a figure
+fig, axs = plt.subplots(4, 5, figsize=(10, 10))
+
+# Flatten the axes
+axs = axs.flatten()
+
+# Loop over each image
+for i in range(len(data_matrix_ogSize)):
+    # Reconstruct the image
+    img_reconstructedogSize = data_matrix_ogSize[i].reshape((p, p))  # Assuming the images are size p x p
+
+    # Add the image to the plot
+    axs[i].imshow(img_reconstructedogSize, cmap='gray')
+    axs[i].axis('off')  # Hide the axes
+
+# Remove the last unused subplot
+fig.delaxes(axs[-1])
+
+# Show the plot
+plt.suptitle('All Images at d=24')
+plt.show()
 
 
 
@@ -135,44 +145,9 @@ plt.show()
 
 
 
-# # 2.4
 
 
-# def frobeniusNorm(X):
-#     norm = 0
-#     for i in range(len(X)):
-#         for j in range(len(X[0])):
-#             norm += X[i][j] ** 2
-#     return np.sqrt(norm)
-
-
-# def redimensionalizerInator(image, dimension):
-#     U, S, Vt = np.linalg.svd(image, full_matrices=False)
-#     U_reduced = U[:, :dimension]
-#     S_reduced = np.diag(S[:dimension])
-#     Vt_reduced = Vt[:dimension, :]
-#     image_reduced = U_reduced @ S_reduced @ Vt_reduced
-#     return image_reduced
-
-
-# def frobeniusRelativeError(OriginalMatrix, dimension):
-#     reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
-#     error = frobeniusNorm(OriginalMatrix - reduced_matrix) / frobeniusNorm(OriginalMatrix)
-#     return error
-
-# def frobeniusMaximumError(image_list, dimension):
-#     errors = []
-#     for image in image_list:
-#         error = frobeniusRelativeError(image, dimension)
-#         errors.append(error)
-#     return min(errors)
-
-# def errorByDimensions(image_list, max_dimension):
-#     errors = []
-#     for i in range(1, max_dimension + 1):
-#         error = frobeniusMaximumError(image_list, i)
-#         errors.append(error)
-#     return errors
+# 2.4
 
 # Load the images
 images2, imagesforMat2 = [], []
@@ -191,23 +166,23 @@ data_matrix2 = np.vstack(imagesforMat2)
 
 
 
-# # Calculate the maximum errors for each dimension
-# max_dimension = 24
-# max_errors = errorByDimensions(images2, max_dimension)
+# Calculate the maximum errors for each dimension
+max_dimension = 24
+max_errors = aux.errorByDimensions(images2, max_dimension)
 
-# # Plot the maximum errors
-# plt.figure(figsize=(10, 7))
-# plt.fill_between(range(1, max_dimension + 1), max_errors, color='skyblue', alpha=0.4)
-# plt.plot(range(1, max_dimension + 1), max_errors, marker='o', color='blue')
-# plt.axhline(y=0.1, color='r', linestyle='--')  # Add red dotted line at y=0.1
-# plt.xlabel('Dimensions')
-# plt.ylabel('Maximum Frobenius Relative Error')
-# plt.title('Maximum Frobenius Error by Dimensions')
-# plt.xticks(range(1, max_dimension + 1))  # Set x-axis ticks for every whole value between 1 and 24
-# plt.xlim(1, max_dimension)  # Set the x-axis limit to remove empty space on the right
-# plt.ylim(0, 0.6)  # Set the y-axis limit to show the full range of errors
-# plt.grid(axis='x')  # Add vertical grid lines
-# plt.show()
+# Plot the maximum errors
+plt.figure(figsize=(10, 7))
+plt.fill_between(range(1, max_dimension + 1), max_errors, color='skyblue', alpha=0.4)
+plt.plot(range(1, max_dimension + 1), max_errors, marker='o', color='blue')
+plt.axhline(y=0.1, color='r', linestyle='--')  # Add red dotted line at y=0.1
+plt.xlabel('Dimensions')
+plt.ylabel('Maximum Frobenius Relative Error')
+plt.title('Maximum Frobenius Error by Dimensions')
+plt.xticks(range(1, max_dimension + 1))  # Set x-axis ticks for every whole value between 1 and 24
+plt.xlim(1, max_dimension)  # Set the x-axis limit to remove empty space on the right
+plt.ylim(0, 0.6)  # Set the y-axis limit to show the full range of errors
+plt.grid(axis='x')  # Add vertical grid lines
+plt.show()
 
 
 
@@ -216,8 +191,8 @@ ladimension = 7
 
 # Aprender una representacion (plotear Vt)
 # Perform a singular value decomposition (SVD) on the data matrix 2
-Z1, Vt1 = PCAinator(data_matrix, ladimension)
-Z2, Vt2 = PCAinator(data_matrix2, ladimension)
+Z1, Vt1 = aux.PCAinator(data_matrix, ladimension)
+Z2, Vt2 = aux.PCAinator(data_matrix2, ladimension)
 
 matriz_aprendizaje = Z1 @ Vt2[:ladimension, :]
 # Create a figure
@@ -244,25 +219,5 @@ plt.tight_layout()
 plt.show()
 
 
-# Get the shape of the original images
-img_shape = np.array(img).shape
 
-# Plot the first three eigenvectors
-fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-
-for i in range(3):
-    # Reshape the eigenvector to have the same shape as the original images
-    eigenvector_img = Vt[i].reshape(img_shape)
-
-    # Normalize the eigenvector image for better visualization
-    eigenvector_img = (eigenvector_img - np.min(eigenvector_img)) / (np.max(eigenvector_img) - np.min(eigenvector_img))
-
-    # Plot the eigenvector image
-    axs[i].imshow(eigenvector_img, cmap='gray')
-    axs[i].set_title(f'Autovector {i+1}')
-    axs[i].axis('off')
-
-fig.suptitle('Primeros tres autovectores de Vt representados como imágenes')
-
-plt.show()
 

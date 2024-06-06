@@ -6,6 +6,9 @@ import auxiliar as aux
 from scipy.ndimage import zoom
 from mpl_toolkits.mplot3d import Axes3D
 
+# Un par de avisos antes de correr el codigo sin repasarlo (estos avisos se repiten en el codigo de abajo tambien)
+# Correr el codigo apenas luego de abrirlo va a tardar mucho debido a las lineas 100-103, y sus plots debajo
+# Lo mismo para comentar either la linea 300 o las 330-342 para evitar mas de 100 pop-ups de graficos
 
 # Abrir el archivo csv
 promedio_columnas = []
@@ -33,15 +36,6 @@ with open('y.txt', 'r') as f:
     y = [float(line) for line in f]
 
 
-def PCAinator(Matriz, Dimensions):
-    U, S, Vt = np.linalg.svd(Matriz, full_matrices=False)
-    U_reduced = U[:, :Dimensions]
-    S_reduced = np.diag(S[:Dimensions])
-    matrix_reduced = np.dot(U_reduced, S_reduced)
-
-    return matrix_reduced
-
-
 def pseudoinvCalculatorInator(X):
     U, S, Vt = np.linalg.svd(X, full_matrices=False)
     S_inv = np.diag([1/S if S != 0 else 0 for S in S])
@@ -53,6 +47,8 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 # Descomposición SVD
 U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
+
+
 
 # # Esto es para graficar la matriz original
 # # Calcular el factor de zoom para cada dimensión
@@ -73,6 +69,10 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 
 
+
+
+# para graficar las matrices de similaridad con diferentes dimensiones
+
 # def reducedSimilarityMatrixer(sigma, originalMatrix, dimensions):
 #     U, S, Vt = np.linalg.svd(originalMatrix, full_matrices=False)
 #     U_reduced = U[:, :dimensions]
@@ -88,24 +88,40 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 # fig, axs = plt.subplots(2, 2, figsize=(10, 10))
 
+
+# # Aviso Importante: Correr estas funciones puede tardar mucho, si se desea correr el codigo rapido, comentar estas 4 lineas y sus plots
 # similarity_matrix_d2 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[0])
 # similarity_matrix_d6 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[1])
 # similarity_matrix_d10 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[2])
 # similarity_matrix_d106 = aux.eucledian_distance(theSigma, matriz_mediana)
 
+
 # axs[0, 0].imshow(similarity_matrix_d2, cmap='hot', interpolation='none')
 # axs[0, 0].set_title('Similariy Matrix with 2 Dimensions')
+# axs[0, 0].set_xlabel('Sample Number')
+# axs[0, 0].set_ylabel('Sample Number')
+
 # axs[0, 1].imshow(similarity_matrix_d6, cmap='hot', interpolation='none')
 # axs[0, 1].set_title('Similariy Matrix with 6 Dimensions')
+# axs[0, 1].set_xlabel('Sample Number')
+# axs[0, 1].set_ylabel('Sample Number')
+
 # axs[1, 0].imshow(similarity_matrix_d10, cmap='hot', interpolation='none')
 # axs[1, 0].set_title('Similariy Matrix with 10 Dimensions')
+# axs[1, 0].set_xlabel('Sample Number')
+# axs[1, 0].set_ylabel('Sample Number')
+
 # axs[1, 1].imshow(similarity_matrix_d106, cmap='hot', interpolation='none')
 # axs[1, 1].set_title('Similariy Matrix with 106 Dimensions')
-
+# axs[1, 1].set_xlabel('Sample Number')
+# axs[1, 1].set_ylabel('Sample Number')
 
 # plt.tight_layout()
 # plt.show()
 
+
+# si este de arriba no sirve, usar este de abajo que es mas rustico pero ya comprobado de sobra que funciona
+# (PS: que tarde mucho no significa que no sirva...)
 
 # U_reduced2 = U[:, :2]
 # S_reduced2 = np.diag(S[:2])
@@ -126,18 +142,12 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 # matriz_reconstruida6 = U_reduced6 @ S_reduced6 @ Vt_reduced6
 # matriz_reconstruida10 = U_reduced10 @ S_reduced10 @ Vt_reduced10
 
-
 # sigm = 20
 
 # matriz_simil2 = aux.eucledian_distance(sigm, matriz_reconstruida2)
 # matriz_simil6 = aux.eucledian_distance(sigm, matriz_reconstruida6)
 # matriz_simil10 = aux.eucledian_distance(sigm, matriz_reconstruida10)
 # matriz_simil106 = aux.eucledian_distance(sigm, matriz_mediana)
-
-
-
-
-
 
 # # Create a 2x2 figure with the 4 matriz_simil subplots
 # fig, axs = plt.subplots(2, 2, figsize=(8, 8))
@@ -172,6 +182,8 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 # # Show the figure
 # plt.show()
 
+# hasta aca todo este bloque comentado era el codigo mas rustico original para graficar las de similaridad
+# que ya da miedo sacarlo por si el otro llega a tener un error...
 
 
 
@@ -179,71 +191,59 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 
 
-
-# # Grafico de Significancia de Dimensiones para SVD
-# plt.figure(figsize=(10, 5))
-# plt.bar(range(1, len(S) + 1), S)
-# plt.title('Valores singulares de la Matriz')
-# plt.xlabel('Índice del valor singular')
-# plt.ylabel('Valor del valor singular')
-# plt.show()
-
-
-
-# # Apendice 1.3
-
-# # Generar el diccionario
-# dict_autovector = {i: abs(v) for i, v in enumerate(Vt[0])}
-
-# # Ordenar el diccionario de mayor a menor
-# dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
-
-# # Crear un gráfico de barras de los valores
-# plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
-# plt.title('Valores absolutos de cada columna en primera fila de Vt')
-# plt.show()
+# Grafico de Significancia de Dimensiones para SVD
+plt.figure(figsize=(10, 5))
+plt.bar(range(1, len(S) + 1), S)
+plt.title('Valores singulares de la Matriz')
+plt.xlabel('Índice del valor singular')
+plt.ylabel('Valor del valor singular')
+plt.show()
 
 
 
 
+# Grafico de valores absolutos de primer autovector
+# Generar el diccionario
+dict_autovector = {i: abs(v) for i, v in enumerate(Vt[0])}
 
-# # # Generar el gráfico de dispersión
+# Ordenar el diccionario de mayor a menor
+dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
 
-# # Z, vt = PCAinator(matriz_mediana, 2)
-# # plt.figure(figsize=(10, 5))
-# # plt.scatter(Z[:, 0], Z[:, 1])
-# # plt.title('Proyección de los datos en los dos primeros autovectores')
-# # plt.xlabel('Autovector 1')
-# # plt.ylabel('Autovector 2')
-# # plt.show()
-
-
-# # # # Para PCA y Dispersion 3D
-# # # U_reducida3 = U[:, :3]
-# # # S_reducida3 = np.diag(S[:3])
-# # # Vt_reducida3 = Vt[:3, :]
-
-
-# # # # Grafico de Dispersion 3D (PCA)
-# # # fig = plt.figure(figsize=(10, 5))
-# # # ax = fig.add_subplot(111, projection='3d')
-# # # ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
-# # # ax.set_title('Proyección de los datos en los tres primeros autovectores')
-# # # ax.set_xlabel('Autovector 1')
-# # # ax.set_ylabel('Autovector 2')
-# # # ax.set_zlabel('Autovector 3')
-# # # plt.show()
+# Crear un gráfico de barras de los valores
+plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
+plt.title('Valores absolutos de cada columna en primera fila de Vt')
+plt.show()
 
 
 
 
 
+# Generar el gráfico de dispersión
+
+Z, vtAux = aux.PCAinator(matriz_mediana, 2)
+plt.figure(figsize=(10, 5))
+plt.scatter(Z[:, 0], Z[:, 1])
+plt.title('Proyección de los datos en los dos primeros autovectores')
+plt.xlabel('Autovector 1')
+plt.ylabel('Autovector 2')
+plt.show()
 
 
+# Para PCA y Dispersion 3D
+U_reducida3 = U[:, :3]
+S_reducida3 = np.diag(S[:3])
+Vt_reducida3 = Vt[:3, :]
 
 
-
-
+# Grafico de Dispersion 3D (PCA)
+fig = plt.figure(figsize=(10, 5))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(U_reducida3[:, 0], U_reducida3[:, 1], U_reducida3[:, 2])
+ax.set_title('Proyección de los datos en los tres primeros autovectores')
+ax.set_xlabel('Autovector 1')
+ax.set_ylabel('Autovector 2')
+ax.set_zlabel('Autovector 3')
+plt.show()
 
 
 
@@ -252,7 +252,7 @@ U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
 
 # Create a 3D plot
 
-datos = matriz_mediana
+# Primero centrar la etiqueta
 labels = y - np.mean(y)
 
 def pseudoinvCalculatorInator(X):
@@ -263,7 +263,7 @@ def pseudoinvCalculatorInator(X):
 
 
 def hyperPlanePlotInator(data, labels, dimensions):
-    reduced_mat = PCAinator(data, dimensions)
+    reduced_mat, vtAuxi = aux.PCAinator(data, dimensions)
     pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
     beta = pseudoinverse @ labels
 
@@ -271,32 +271,43 @@ def hyperPlanePlotInator(data, labels, dimensions):
                      np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
     grid_z =  grid_x * beta[0] + grid_y * beta[1]
 
-    # fig = plt.figure(figsize=(10, 7))
-    # ax = fig.add_subplot(111, projection='3d')
-    # scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, c=labels, cmap='hot')
-    # plt.colorbar(scatter)
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+    scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, c=labels, cmap='hot')
+    plt.colorbar(scatter)
 
 
 
-    # ax.plot_surface(grid_x, grid_y, grid_z, color='forestgreen', alpha=0.5)
-    # ax.set_xlabel('Autovector 1')
-    # ax.set_ylabel('Autovector 2')
-    # ax.set_zlabel('Labels')
-    # ax.set_title('Aproximación con Cuadrados Minimos')
-    # plt.show()
+    ax.plot_surface(grid_x, grid_y, grid_z, color='forestgreen', alpha=0.5)
+    ax.set_xlabel('Autovector 1')
+    ax.set_ylabel('Autovector 2')
+    ax.set_zlabel('Labels')
+    ax.set_title('Aproximación con Cuadrados Minimos')
+    plt.show() # comment me (a menos que estes graficando el hiperplano)
 
     
     error = np.linalg.norm(reduced_mat @ beta - labels)
     return error
 
+# to graph the hyperplane
+hyperPlanePlotInator(matriz_mediana, labels, 2)
 
-# hyperPlanePlotInator(matriz_mediana, labels, 2)
 
-# Trying Different Dimensions
+
+
+
+
+# Error con diferentes dimensiones
 
 max_dim = 107
-
 errors = []
+
+
+# IMPORTANTE! SI SE QUIERE CORRER ESTE CODIGO DE ABAJO, RAPIDO Y SIN 107 POP-UPS, SE URGE COMENTAR LAS LINEAS 288-300
+# O POR LO MENOS, COMENTAR LA LINEA 300, YA QUE ESTA LINEA DE CODIGO ES LA QUE GENERA GRAFICOS DE CADA DIMENSION
+# CORRER ESTE CODIGO DEBAJO SIN COMENTAR LA LINEA 300 GENERARA 107 GRAFICOS, 1 POR 1. La de plt.show() en la funcion de arriba
+
+# Comentar estas lineas si se desea 
 for i in range(2, max_dim):
     topa = hyperPlanePlotInator(matriz_mediana, labels, i)
     errors.append(topa)

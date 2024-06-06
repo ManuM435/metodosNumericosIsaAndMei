@@ -22,3 +22,40 @@ def PCAinator(Matriz, Dimensions):
 
     return matrix_reduced, Vt[:Dimensions, :]
 
+
+def frobeniusNorm(X):
+    norm = 0
+    for i in range(len(X)):
+        for j in range(len(X[0])):
+            norm += X[i][j] ** 2
+    return np.sqrt(norm)
+
+
+def redimensionalizerInator(image, dimension):
+    U, S, Vt = np.linalg.svd(image, full_matrices=False)
+    U_reduced = U[:, :dimension]
+    S_reduced = np.diag(S[:dimension])
+    Vt_reduced = Vt[:dimension, :]
+    image_reduced = U_reduced @ S_reduced @ Vt_reduced
+    return image_reduced
+
+
+def frobeniusRelativeError(OriginalMatrix, dimension):
+    reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
+    error = frobeniusNorm(OriginalMatrix - reduced_matrix) / frobeniusNorm(OriginalMatrix)
+    return error
+
+def frobeniusMaximumError(image_list, dimension):
+    errors = []
+    for image in image_list:
+        error = frobeniusRelativeError(image, dimension)
+        errors.append(error)
+    return min(errors)
+
+def errorByDimensions(image_list, max_dimension):
+    errors = []
+    for i in range(1, max_dimension + 1):
+        error = frobeniusMaximumError(image_list, i)
+        errors.append(error)
+    return errors
+
