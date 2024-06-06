@@ -194,10 +194,9 @@ errorsRec, aprendizajes, originales = [], [], []
 
 # Aprender una representacion (plotear Vt)
 # Perform a singular value decomposition (SVD) on the data matrix 2
-Z1, Vt1 = aux.PCAinator(data_matrix, ladimension)
 Z2, Vt2 = aux.PCAinator(data_matrix2, ladimension)
 
-matriz_aprendizaje = Z1 @ Vt2[:ladimension, :]
+matriz_aprendizaje = data_matrix @ Vt2.T @ Vt2
 # Create a figure
 fig, axs = plt.subplots(2, 4, figsize=(10, 10))
 
