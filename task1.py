@@ -72,19 +72,20 @@ matriz_mediana = np.array(matriz_datos) - np.mean(matriz_datos)
 
 
 
-def reducedSimilarityMatrixer(sigma, originalMatrix, dimensions):
-    U, S, Vt = np.linalg.svd(originalMatrix, full_matrices=False)
-    U_reduced = U[:, :dimensions]
-    S_reduced = np.diag(S[:dimensions])
-    Vt_reduced = Vt[:dimensions, :]
-    matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
-    similarity_matrix_reduced = aux.eucledian_distance(sigma, matrix_reduced)
-    return similarity_matrix_reduced
+# def reducedSimilarityMatrixer(sigma, originalMatrix, dimensions):
+#     U, S, Vt = np.linalg.svd(originalMatrix, full_matrices=False)
+#     U_reduced = U[:, :dimensions]
+#     S_reduced = np.diag(S[:dimensions])
+#     Vt_reduced = Vt[:dimensions, :]
+#     matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+#     similarity_matrix_reduced = aux.eucledian_distance(sigma, matrix_reduced)
+#     return similarity_matrix_reduced
 
 # Plot similarity matrices with different dimensions
 dimensions_list = [2, 6, 10, 4]
 theSigma = 50
 
+<<<<<<< HEAD
 fig, axs = plt.subplots(2, 2, figsize=(10, 10))
 
 similarity_matrix_d2 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[0])
@@ -103,6 +104,50 @@ axs[1, 1].set_title('Similariy Matrix with 106 Dimensions')
 
 
 plt.tight_layout()
+=======
+# for dimensions in dimensions_list:
+#     similarity_matrix_reduced = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions)
+#     plt.imshow(similarity_matrix_reduced, cmap='hot', interpolation='nearest')
+#     plt.colorbar()
+#     plt.xlabel('X Axis')
+#     plt.ylabel('Y Axis')
+#     plt.title(f'Similarity Matrix with Different Dimensio Dimensions')
+#     plt.show()
+
+
+
+
+
+
+
+
+ # Descomposición SVD
+U, S, Vt = np.linalg.svd(matriz_mediana, full_matrices=False)
+
+# Grafico de Significancia de Dimensiones para SVD
+plt.figure(figsize=(10, 5))
+plt.bar(range(1, len(S) + 1), S)
+plt.title('Valores singulares de la matriz S')
+plt.xlabel('Índice del valor singular')
+plt.ylabel('Valor del valor singular')
+plt.show()
+
+
+
+# Apendice 1.3
+
+# Generar el diccionario
+dict_autovector = {i: abs(v) for i, v in enumerate(Vt[0])}
+
+# Ordenar el diccionario de mayor a menor
+dict_autovector_ordenado = dict(sorted(dict_autovector.items(), key=lambda item: item[1], reverse=True))
+
+# Crear un gráfico de barras de los valores
+plt.bar(dict_autovector_ordenado.keys(), dict_autovector_ordenado.values())
+plt.title('Valores (en módulo) de cada feature en el primer autovector de Vt')
+plt.xlabel('Número de la feature')
+plt.ylabel('Valor del autovector')
+>>>>>>> 42279cf6c65ae4602c2058c6373cb7e586399d08
 plt.show()
 
 
