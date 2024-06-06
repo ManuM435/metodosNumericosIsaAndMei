@@ -25,34 +25,34 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 
-# # Reconstruct the images from the low-dimensional representation and visualize them
-# dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
-# amountofsamples = 5
-# # Create a figure
-# fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
+# Reconstruct the images from the low-dimensional representation and visualize them
+dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
+amountofsamples = 5
+# Create a figure
+fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
 
-# for i in range(amountofsamples):
-#     for j, d in enumerate(dimensions):
-#         U_reduced = U[:, :d]
-#         S_reduced = np.diag(S[:d])
-#         Vt_reduced = Vt[:d, :]
-#         matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
+for i in range(amountofsamples):
+    for j, d in enumerate(dimensions):
+        U_reduced = U[:, :d]
+        S_reduced = np.diag(S[:d])
+        Vt_reduced = Vt[:d, :]
+        matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
 
-#         # Visualize the reconstructed image
-#         img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
-#         axs[i, j].imshow(img_reconstructed, cmap='gray')
-#         axs[i, j].axis('off')  # Turn off the axes
+        # Visualize the reconstructed image
+        img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
+        axs[i, j].imshow(img_reconstructed, cmap='gray')
+        axs[i, j].axis('off')  # Turn off the axes
 
-#         # Add a label to the first subplot of each column
-#         if i == 0:
-#             axs[i, j].set_title(f'd={d}')
+        # Add a label to the first subplot of each column
+        if i == 0:
+            axs[i, j].set_title(f'd={d}')
 
-# # Add a title to the figure
-# fig.suptitle('Image Reconstruction with Different Dimensions')
+# Add a title to the figure
+fig.suptitle('Image Reconstruction with Different Dimensions')
 
-# # Adjust the space between subplots
+# Adjust the space between subplots
 
-# plt.show()
+plt.show()
 
 # # Add a title to the figure
 # fig.suptitle('Image Reconstruction with Different Dimensions')
@@ -137,41 +137,41 @@ p = int(np.sqrt(images[0].shape[0]))
 # # 2.4
 
 
-def frobeniusNorm(X):
-    norm = 0
-    for i in range(len(X)):
-        for j in range(len(X[0])):
-            norm += X[i][j] ** 2
-    return np.sqrt(norm)
+# def frobeniusNorm(X):
+#     norm = 0
+#     for i in range(len(X)):
+#         for j in range(len(X[0])):
+#             norm += X[i][j] ** 2
+#     return np.sqrt(norm)
 
 
-def redimensionalizerInator(image, dimension):
-    U, S, Vt = np.linalg.svd(image, full_matrices=False)
-    U_reduced = U[:, :dimension]
-    S_reduced = np.diag(S[:dimension])
-    Vt_reduced = Vt[:dimension, :]
-    image_reduced = U_reduced @ S_reduced @ Vt_reduced
-    return image_reduced
+# def redimensionalizerInator(image, dimension):
+#     U, S, Vt = np.linalg.svd(image, full_matrices=False)
+#     U_reduced = U[:, :dimension]
+#     S_reduced = np.diag(S[:dimension])
+#     Vt_reduced = Vt[:dimension, :]
+#     image_reduced = U_reduced @ S_reduced @ Vt_reduced
+#     return image_reduced
 
 
-def frobeniusRelativeError(OriginalMatrix, dimension):
-    reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
-    error = frobeniusNorm(OriginalMatrix - reduced_matrix) / frobeniusNorm(OriginalMatrix)
-    return error
+# def frobeniusRelativeError(OriginalMatrix, dimension):
+#     reduced_matrix = redimensionalizerInator(OriginalMatrix, dimension)
+#     error = frobeniusNorm(OriginalMatrix - reduced_matrix) / frobeniusNorm(OriginalMatrix)
+#     return error
 
-def frobeniusMaximumError(image_list, dimension):
-    errors = []
-    for image in image_list:
-        error = frobeniusRelativeError(image, dimension)
-        errors.append(error)
-    return min(errors)
+# def frobeniusMaximumError(image_list, dimension):
+#     errors = []
+#     for image in image_list:
+#         error = frobeniusRelativeError(image, dimension)
+#         errors.append(error)
+#     return min(errors)
 
-def errorByDimensions(image_list, max_dimension):
-    errors = []
-    for i in range(1, max_dimension + 1):
-        error = frobeniusMaximumError(image_list, i)
-        errors.append(error)
-    return errors
+# def errorByDimensions(image_list, max_dimension):
+#     errors = []
+#     for i in range(1, max_dimension + 1):
+#         error = frobeniusMaximumError(image_list, i)
+#         errors.append(error)
+#     return errors
 
 # Load the images
 images2, imagesforMat2 = [], []
@@ -190,23 +190,23 @@ data_matrix2 = np.vstack(imagesforMat2)
 
 
 
-# Calculate the maximum errors for each dimension
-max_dimension = 24
-max_errors = errorByDimensions(images2, max_dimension)
+# # Calculate the maximum errors for each dimension
+# max_dimension = 24
+# max_errors = errorByDimensions(images2, max_dimension)
 
-# Plot the maximum errors
-plt.figure(figsize=(10, 7))
-plt.fill_between(range(1, max_dimension + 1), max_errors, color='skyblue', alpha=0.4)
-plt.plot(range(1, max_dimension + 1), max_errors, marker='o', color='blue')
-plt.axhline(y=0.1, color='r', linestyle='--')  # Add red dotted line at y=0.1
-plt.xlabel('Dimensions')
-plt.ylabel('Maximum Frobenius Relative Error')
-plt.title('Maximum Frobenius Error by Dimensions')
-plt.xticks(range(1, max_dimension + 1))  # Set x-axis ticks for every whole value between 1 and 24
-plt.xlim(1, max_dimension)  # Set the x-axis limit to remove empty space on the right
-plt.ylim(0, 0.6)  # Set the y-axis limit to show the full range of errors
-plt.grid(axis='x')  # Add vertical grid lines
-plt.show()
+# # Plot the maximum errors
+# plt.figure(figsize=(10, 7))
+# plt.fill_between(range(1, max_dimension + 1), max_errors, color='skyblue', alpha=0.4)
+# plt.plot(range(1, max_dimension + 1), max_errors, marker='o', color='blue')
+# plt.axhline(y=0.1, color='r', linestyle='--')  # Add red dotted line at y=0.1
+# plt.xlabel('Dimensions')
+# plt.ylabel('Maximum Frobenius Relative Error')
+# plt.title('Maximum Frobenius Error by Dimensions')
+# plt.xticks(range(1, max_dimension + 1))  # Set x-axis ticks for every whole value between 1 and 24
+# plt.xlim(1, max_dimension)  # Set the x-axis limit to remove empty space on the right
+# plt.ylim(0, 0.6)  # Set the y-axis limit to show the full range of errors
+# plt.grid(axis='x')  # Add vertical grid lines
+# plt.show()
 
 
 
@@ -214,6 +214,34 @@ plt.show()
 ladimension = 7
 
 # Aprender una representacion (plotear Vt)
+# Perform a singular value decomposition (SVD) on the data matrix 2
+Z1, Vt1 = PCAinator(data_matrix, ladimension)
+Z2, Vt2 = PCAinator(data_matrix2, ladimension)
+
+matriz_aprendizaje = Z1 @ Vt2[:ladimension, :]
+# Create a figure
+fig, axs = plt.subplots(2, 4, figsize=(10, 10))
+
+# Set a title for the figure
+fig.suptitle('Primeras 4 Imágenes del dataset 1 Reconstruidas vs las Originales')
+
+# Reshape and plot the first 4 images
+for i in range(4):
+    img = matriz_aprendizaje[i].reshape((p, p))  # Assuming the images are size p x p
+    axs[0, i].imshow(img, cmap='gray')
+    axs[0, i].axis('off')  # Turn off the axes
+    axs[0, i].set_title(f'Reconstruida {i+1}')  # Set a title for each image
+
+# Reshape and plot the first 4 original images
+for i in range(4):
+    img_original = data_matrix[i].reshape((p, p))  # Assuming the images are size p x p
+    axs[1, i].imshow(img_original, cmap='gray')
+    axs[1, i].axis('off')  # Turn off the axes
+    axs[1, i].set_title(f'Original {i+1}')  # Set a title for each image
+
+plt.tight_layout()
+plt.show()
+
 
 # Get the shape of the original images
 img_shape = np.array(img).shape
@@ -236,3 +264,4 @@ for i in range(3):
 fig.suptitle('Primeros tres autovectores de Vt representados como imágenes')
 
 plt.show()
+
