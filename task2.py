@@ -25,11 +25,11 @@ p = int(np.sqrt(images[0].shape[0]))
 
 
 
-# Reconstruct the images from the low-dimensional representation and visualize them
-dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
-amountofsamples = 5
-# Create a figure
-fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
+# # Reconstruct the images from the low-dimensional representation and visualize them
+# dimensions = [24, 10, 5, 2]  # The dimensions to use for reconstruction
+# amountofsamples = 5
+# # Create a figure
+# fig, axs = plt.subplots(amountofsamples, len(dimensions), figsize=(14, 14))
 
 for i in range(amountofsamples):
     for j, d in enumerate(dimensions):
@@ -38,10 +38,10 @@ for i in range(amountofsamples):
         Vt_reduced = Vt[:d, :]
         matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
 
-        # Visualize the reconstructed image
-        img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
-        axs[i, j].imshow(img_reconstructed, cmap='gray')
-        axs[i, j].axis('off')  # Turn off the axes
+#         # Visualize the reconstructed image
+#         img_reconstructed = matrix_reconstructed[i].reshape((p, p))  # Assuming the images are size p x p
+#         axs[i, j].imshow(img_reconstructed, cmap='gray')
+#         axs[i, j].axis('off')  # Turn off the axes
 
         # Add a label to the first subplot of each column
         if i == 0:
@@ -54,46 +54,46 @@ fig.suptitle('Image Reconstruction with Different Dimensions')
 
 plt.show()
 
-# # Add a title to the figure
-# fig.suptitle('Image Reconstruction with Different Dimensions')
-# import matplotlib.ticker as ticker
-# from mpl_toolkits.axes_grid1 import make_axes_locatable
+# Add a title to the figure
+fig.suptitle('Image Reconstruction with Different Dimensions')
+import matplotlib.ticker as ticker
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-# # Create a figure
-# fig, axs = plt.subplots(2, 2, figsize=(8, 8))
+# Create a figure
+fig, axs = plt.subplots(2, 2, figsize=(8, 8))
 
-# for i, d in enumerate(dimensions):
-#     # Perform a reduced SVD on the data matrix
-#     U_reduced = U[:, :d]
-#     S_reduced = np.diag(S[:d])
-#     Vt_reduced = Vt[:d, :]
-#     data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
+for i, d in enumerate(dimensions):
+    # Perform a reduced SVD on the data matrix
+    U_reduced = U[:, :d]
+    S_reduced = np.diag(S[:d])
+    Vt_reduced = Vt[:d, :]
+    data_matrix_reduced = U_reduced @ S_reduced @ Vt_reduced
 
-#     # Initialize the similarity matrix
-#     similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
+    # Initialize the similarity matrix
+    similarity_matrix = aux.eucledian_distance(2000, data_matrix_reduced)
 
-#     # Visualize the similarity matrix
-#     ax = axs[i//2, i%2]
-#     im = ax.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
-#     ax.set_title(f'Similarity Matrix (d={d})')
+    # Visualize the similarity matrix
+    ax = axs[i//2, i%2]
+    im = ax.imshow(similarity_matrix, cmap='hot', interpolation='nearest')
+    ax.set_title(f'Similarity Matrix (d={d})')
 
-#     # Set x and y labels
-#     ax.set_xlabel('Sample Number')
-#     ax.set_ylabel('Sample Number')
+    # Set x and y labels
+    ax.set_xlabel('Sample Number')
+    ax.set_ylabel('Sample Number')
 
-#     # Set x and y ticks to be integers
-#     ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-#     ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+    # Set x and y ticks to be integers
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-#     # Create an axes on the right side of ax. The width of cax will be 5%
-#     # of ax and the padding between cax and ax will be fixed at 0.05 inch.
-#     divider = make_axes_locatable(ax)
-#     cax = divider.append_axes("right", size="5%", pad=0.05)
+    # Create an axes on the right side of ax. The width of cax will be 5%
+    # of ax and the padding between cax and ax will be fixed at 0.05 inch.
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
 
-#     fig.colorbar(im, cax=cax, label='Similarity')
+    fig.colorbar(im, cax=cax, label='Similarity')
 
-# plt.tight_layout()
-# plt.show()
+plt.tight_layout(h_pad=0.5)  # Adjust the horizontal space between subplots
+plt.show()
 # # Set the dimension to 24
 # d = 24
 
