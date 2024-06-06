@@ -85,31 +85,25 @@ def reducedSimilarityMatrixer(sigma, originalMatrix, dimensions):
 dimensions_list = [2, 6, 10, 4]
 theSigma = 50
 
-simimat = aux.eucledian_distance(theSigma, matriz_mediana)
-plt.imshow(simimat, cmap='hot', interpolation='none')
-plt.title('Similarity Matrix')
-plt.colorbar()
+fig, axs = plt.subplots(2, 2, figsize=(10, 10))
+
+similarity_matrix_d2 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[0])
+similarity_matrix_d6 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[1])
+similarity_matrix_d10 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[2])
+similarity_matrix_d106 = aux.eucledian_distance(theSigma, matriz_mediana)
+
+axs[0, 0].imshow(similarity_matrix_d2, cmap='hot', interpolation='none')
+axs[0, 0].set_title('Similariy Matrix with 2 Dimensions')
+axs[0, 1].imshow(similarity_matrix_d6, cmap='hot', interpolation='none')
+axs[0, 1].set_title('Similariy Matrix with 6 Dimensions')
+axs[1, 0].imshow(similarity_matrix_d10, cmap='hot', interpolation='none')
+axs[1, 0].set_title('Similariy Matrix with 10 Dimensions')
+axs[1, 1].imshow(similarity_matrix_d106, cmap='hot', interpolation='none')
+axs[1, 1].set_title('Similariy Matrix with 106 Dimensions')
+
+
+plt.tight_layout()
 plt.show()
-
-# fig, axs = plt.subplots(2, 2, figsize=(10, 10))
-
-# similarity_matrix_d2 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[0])
-# similarity_matrix_d6 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[1])
-# similarity_matrix_d10 = reducedSimilarityMatrixer(theSigma, matriz_mediana, dimensions_list[2])
-# similarity_matrix_d106 = aux.eucledian_distance(theSigma, matriz_mediana)
-
-# axs[0, 0].imshow(similarity_matrix_d2, cmap='hot', interpolation='none')
-# axs[0, 0].set_title('Similariy Matrix with 2 Dimensions')
-# axs[0, 1].imshow(similarity_matrix_d6, cmap='hot', interpolation='none')
-# axs[0, 1].set_title('Similariy Matrix with 6 Dimensions')
-# axs[1, 0].imshow(similarity_matrix_d10, cmap='hot', interpolation='none')
-# axs[1, 0].set_title('Similariy Matrix with 10 Dimensions')
-# axs[1, 1].imshow(similarity_matrix_d106, cmap='hot', interpolation='none')
-# axs[1, 1].set_title('Similariy Matrix with 106 Dimensions')
-
-
-# plt.tight_layout()
-# plt.show()
 
 
 
