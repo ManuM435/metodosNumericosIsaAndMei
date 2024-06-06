@@ -50,7 +50,7 @@ def frobeniusMaximumError(image_list, dimension):
     for image in image_list:
         error = frobeniusRelativeError(image, dimension)
         errors.append(error)
-    return min(errors)
+    return max(errors)
 
 def errorByDimensions(image_list, max_dimension):
     errors = []

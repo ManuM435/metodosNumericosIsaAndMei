@@ -187,7 +187,10 @@ plt.show()
 
 
 
-ladimension = 7
+# Reconstruyendo
+
+ladimension = 9 # esto es en base al numero que nos dio arriba, donde el error relativo maximo de any image era siempre menor a 10%
+errorsRec, aprendizajes, originales = [], [], []
 
 # Aprender una representacion (plotear Vt)
 # Perform a singular value decomposition (SVD) on the data matrix 2
@@ -207,6 +210,7 @@ for i in range(4):
     axs[0, i].imshow(img, cmap='gray')
     axs[0, i].axis('off')  # Turn off the axes
     axs[0, i].set_title(f'Reconstruida {i+1}')  # Set a title for each image
+    aprendizajes.append(img)
 
 # Reshape and plot the first 4 original images
 for i in range(4):
@@ -214,9 +218,25 @@ for i in range(4):
     axs[1, i].imshow(img_original, cmap='gray')
     axs[1, i].axis('off')  # Turn off the axes
     axs[1, i].set_title(f'Original {i+1}')  # Set a title for each image
+    originales.append(img_original)
 
 plt.tight_layout()
 plt.show()
+
+for i in range(4):
+    error = aux.frobeniusNorm(originales[i] - aprendizajes[i]) / aux.frobeniusNorm(originales[i])
+    errorsRec.append(error)
+
+# Plot the errors
+plt.figure(figsize=(10, 7))
+plt.bar(range(1, 5), errorsRec)
+plt.xlabel('Image Number')
+plt.ylabel('Frobenius Relative Error')
+plt.title('Frobenius Relative Error by Image Number')
+plt.xticks(range(1, 5))
+plt.grid(axis='x')
+plt.show()
+
 
 
 
