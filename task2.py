@@ -238,5 +238,26 @@ plt.show()
 
 
 
+#Graficar las 8 imágenes del dataset 2
+p2 = int(np.sqrt(imagesforMat2[0].shape[0]))
 
+# Initialize a figure
+fig, axs = plt.subplots(2, 4, figsize=(10, 10))
+
+axs = axs.flatten()
+
+for i in range(8):  
+    img_original2 = data_matrix2[i].reshape((p2, p2))  
+
+    # Add the image to the plot
+    axs[i].imshow(img_original2, cmap='gray')
+    axs[i].axis('off')  # Hide the axes
+
+# Remove the last unused subplot
+if 8 < len(axs):  # If there are more than 8 subplots
+    for i in range(8, len(axs)):  # Remove the remaining subplots
+        fig.delaxes(axs[i])
+
+plt.suptitle('Images from Dataset 2')
+plt.show()
 
