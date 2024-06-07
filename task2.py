@@ -198,21 +198,21 @@ Z2, Vt2 = aux.PCAinator(data_matrix2, ladimension)
 
 matriz_aprendizaje = data_matrix @ Vt2.T @ Vt2
 # Create a figure
-fig, axs = plt.subplots(2, 4, figsize=(10, 10))
+fig, axs = plt.subplots(2, 6, figsize=(10, 10))
 
 # Set a title for the figure
 fig.suptitle('Primeras 4 Imágenes del dataset 1 Reconstruidas vs las Originales')
 
 # Reshape and plot the first 4 images
-for i in range(4):
+for i in range(6):
     img = matriz_aprendizaje[i].reshape((p, p))  # Assuming the images are size p x p
     axs[0, i].imshow(img, cmap='gray')
     axs[0, i].axis('off')  # Turn off the axes
-    axs[0, i].set_title(f'Reconstruida {i+1}')  # Set a title for each image
+    axs[0, i].set_title(f'Remade {i+1}')  # Set a title for each image
     aprendizajes.append(img)
 
 # Reshape and plot the first 4 original images
-for i in range(4):
+for i in range(6):
     img_original = data_matrix[i].reshape((p, p))  # Assuming the images are size p x p
     axs[1, i].imshow(img_original, cmap='gray')
     axs[1, i].axis('off')  # Turn off the axes
@@ -222,18 +222,19 @@ for i in range(4):
 plt.tight_layout()
 plt.show()
 
-for i in range(4):
+for i in range(6):
     error = aux.frobeniusNorm(originales[i] - aprendizajes[i]) / aux.frobeniusNorm(originales[i])
     errorsRec.append(error)
 
 # Plot the errors
 plt.figure(figsize=(10, 7))
-plt.bar(range(1, 5), errorsRec)
+plt.bar(range(1, 7), errorsRec, color='navy')
+plt.axhline(y=0.1, color='red', linestyle='--', label='MAX Error for Data2')  # Add pointed darkred line at y=0.1
 plt.xlabel('Image Number')
 plt.ylabel('Frobenius Relative Error')
 plt.title('Frobenius Relative Error by Image Number')
-plt.xticks(range(1, 5))
-plt.grid(axis='x')
+plt.xticks(range(1, 7))
+plt.legend()  # Add legend
 plt.show()
 
 
