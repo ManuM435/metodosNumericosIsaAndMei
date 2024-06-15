@@ -262,68 +262,7 @@ def pseudoinvCalculatorInator(X):
     return X_pseudoinverse
 
 
-reduci, topa = aux.PCAinator(matriz_mediana, 107)
+reduci = aux.PCAinator(matriz_mediana, 2)
 pseudi = pseudoinvCalculatorInator(reduci)
 betita = pseudi @ labels
 print(betita)
-
-
-# def hyperPlanePlotInator(data, labels, dimensions):
-#     reduced_mat, vtAuxi = aux.PCAinator(data, dimensions)
-#     pseudoinverse= pseudoinvCalculatorInator(reduced_mat)
-#     beta = pseudoinverse @ labels
-
-#     grid_x, grid_y = np.meshgrid(np.linspace(min(reduced_mat[:, 0]), max(reduced_mat[:, 0]), 50),
-#                      np.linspace(min(reduced_mat[:, 1]), max(reduced_mat[:, 1]), 50))
-#     grid_z =  grid_x * beta[0] + grid_y * beta[1]
-
-#     fig = plt.figure(figsize=(10, 7))
-#     ax = fig.add_subplot(111, projection='3d')
-#     scatter = ax.scatter(reduced_mat[:, 0], reduced_mat[:, 1], labels, c=labels, cmap='hot')
-#     plt.colorbar(scatter)
-
-
-
-#     ax.plot_surface(grid_x, grid_y, grid_z, color='forestgreen', alpha=0.5)
-#     ax.set_xlabel('Autovector 1')
-#     ax.set_ylabel('Autovector 2')
-#     ax.set_zlabel('Labels')
-#     ax.set_title('Aproximación con Cuadrados Minimos')
-#     plt.show() # comment me (a menos que estes graficando el hiperplano)
-
-    
-#     error = np.linalg.norm(reduced_mat @ beta - labels)
-#     return error
-
-# # to graph the hyperplane
-# hyperPlanePlotInator(matriz_mediana, labels, 2)
-
-
-
-
-
-
-# # Error con diferentes dimensiones
-
-# max_dim = 107
-# errors = []
-
-
-# # IMPORTANTE! SI SE QUIERE CORRER ESTE CODIGO DE ABAJO, RAPIDO Y SIN 107 POP-UPS, SE URGE COMENTAR LAS LINEAS 288-300
-# # O POR LO MENOS, COMENTAR LA LINEA 300, YA QUE ESTA LINEA DE CODIGO ES LA QUE GENERA GRAFICOS DE CADA DIMENSION
-# # CORRER ESTE CODIGO DEBAJO SIN COMENTAR LA LINEA 300 GENERARA 107 GRAFICOS, 1 POR 1. La de plt.show() en la funcion de arriba
-
-# # Comentar estas lineas si se desea 
-# for i in range(2, max_dim):
-#     topa = hyperPlanePlotInator(matriz_mediana, labels, i)
-#     errors.append(topa)
-
-# # Plot the errors
-# plt.figure(figsize=(10, 7))
-# plt.plot(range(2, max_dim), errors, marker='o', color='maroon')
-# plt.xlabel('Dimensions')
-# plt.ylabel('Error')
-# plt.title('Error by Dimensions')
-# plt.grid()
-# plt.ylim(0, 1400)
-# plt.show()
