@@ -14,5 +14,5 @@ def gradient_descent(start, A, b, learn_rate, iters):
 A = np.array([[1, 2], [3, 4]])
 b = np.array([1, 2])
 
-iterations = 300
-print(gradient_descent([1, 1], A, b, 0.5, iterations))
+iterations = 3000000
+print(gradient_descent([1, 1], A, b, 0.01, iterations))
