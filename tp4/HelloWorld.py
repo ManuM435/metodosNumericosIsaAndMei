@@ -114,7 +114,7 @@ iterations = 4000
 svd_truth, sigmaMax = SVDFinder(A, b)
 delta2 = 0.01 * sigmaMax  # Choose an appropriate value for delta
 
-(final_x_f, costPerIter_f), (final_x_f2, costPerIter_f2), (xFNorms, xF2Norms) = gradientDescent(start, A, b, step, iterations, delta2)
+(final_x_f, costPerIter_f), (final_x_f2, costPerIter_f2), (xFNorms, xF2Norms), (svdFnorms, svdF2Norms) = gradientDescent(start, A, b, step, iterations, delta2, svd_truth)
 
 # Graf'em Norms
 plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of x', scale='linear')
@@ -123,7 +123,7 @@ plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of x', scale='linear')
 plotFvF2(costPerIter_f, costPerIter_f2, 'Cost', 'Cost of Gradient Descent', scale='log')
 
 # Graf'em relative error SVD
-
+plotFvF2(svdFnorms, svdF2Norms, 'Relative Error SVD', 'Relative Error between x and x_svd', scale='log')
 
 
 
