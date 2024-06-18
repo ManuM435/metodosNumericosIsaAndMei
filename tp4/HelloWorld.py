@@ -2,52 +2,51 @@ import numpy as np
 import matplotlib.pyplot as plt
  
 
-np.random.seed(9923)
+np.random.seed(130105)
+# xd con esta seed se van las iteraciones 
+# claramente varian en base a la seed que usemos. A lo mejor podemos mostrar en Apendice como con algunas seeds varia, con otras no
 
 def costFunction(A, b, x):
-    return (A@x - b).T @ (A@x - b)
-    
+    return (A @ x - b).T @ (A @ x - b)
 
 def costFunctionL2(A, b, x, delta2):
-    result = costFunction(A, b, x) +  delta2* np.linalg.norm(x)**2
-    print(np.linalg.norm(x)**2)
+    result = costFunction(A, b, x) +  delta2 * np.linalg.norm(x)**2
     return result
 
 def gradient(A, x, b):
     return 2 * A.T @ (A @ x - b)
 
 def gradientL2(A, x, b, delta2):
-    return 2 * A.T @ (A @ x - b) + 2 * delta2 * x
+    return gradient(A, x, b) + 2 * delta2 * x
 
-def gradientDescent(start, A, b, learn_rate, iters, x_truth, delta):
-    x_f = np.array(start, dtype=float)
-    x_f2 = np.array(start, dtype=float)
-    trajectory_f = [x_f.copy()]
-    trajectory_f2 = [x_f2.copy()]
-    error_por_iter_f = []
-    error_por_iter_f2 = []
-    cost_por_iter_f = []
-    cost_por_iter_f2 = []
+def gradientDescent(start, A, b, learn_rate, iters, svd_truth, delta):
+    x_f, x_f2 = np.array(start, dtype=float), np.array(start, dtype=float)
+    trajectory_f, trajectory_f2 = [x_f.copy()], [x_f2.copy()]
+    errorsF1, errorsF2 = [], []
+    costF1, costF2 = [], []
+
     for _ in range(iters):
-        eval_grad_f = gradient(A, x_f, b)
-        x_f += - (learn_rate * eval_grad_f)
-        error_f = np.linalg.norm(x_f - x_truth)
+        # Los xf1
+        evalF1 = gradient(A, x_f, b)
+        x_f += - (learn_rate * evalF1)
+        error_f = np.linalg.norm(A @ x_f - b)
         cost_f = costFunction(A, b, x_f)
-        error_por_iter_f.append(error_f)
-        cost_por_iter_f.append(cost_f)
+        errorsF1.append(error_f)
+        costF1.append(cost_f)
         trajectory_f.append(x_f.copy())
 
-        eval_grad_f2 = gradientL2(A, x_f, b, delta)
-        x_f2 += - (learn_rate * eval_grad_f2)
-        error_f2 = np.linalg.norm(x_f2 - x_truth)
-        cost_f2 = costFunctionL2(A, b, x_f, delta)
-        error_por_iter_f2.append(error_f2)
-        cost_por_iter_f2.append(cost_f2)
+        # Los xf2
+        evalF2 = gradientL2(A, x_f2, b, delta)
+        x_f2 += - (learn_rate * evalF2)
+        error_f2 = np.linalg.norm(A @ x_f2 - b)
+        cost_f2 = costFunction(A, b, x_f2)
+        errorsF2.append(error_f2)
+        costF2.append(cost_f2)
         trajectory_f2.append(x_f2.copy())
 
-    return (trajectory_f, error_por_iter_f, cost_por_iter_f), (trajectory_f2, error_por_iter_f2, cost_por_iter_f2)
+    return (trajectory_f, errorsF1, costF1), (trajectory_f2, errorsF2, costF2)
 
-def groundTruthFinder(matrix, b):
+def SVDFinder(matrix, b):
     U, S, Vt = np.linalg.svd(matrix, full_matrices=False)
     S_inv = np.zeros((U.shape[0], U.shape[1]))
     for i in range(len(S)):
@@ -65,13 +64,14 @@ def stepInator(A):
     step = 1/maxEigen
     return step
 
-n = 5
-d = 100
-
 def randomMatrixGenerator(n, d):
     A = np.random.randn(n, d)
     b = np.random.randn(n)
     return A, b
+
+# Definimo' Lo' Parametro's
+n = 5
+d = 100
 
 A, b = randomMatrixGenerator(n, d)
 
@@ -80,7 +80,7 @@ start = np.random.randint(0, 10, d)
 
 step = stepInator(A)
 
-iterations = 1000
+iterations = 2000
 
 def plot_error(errorPerIter, errorL2PerIter):
     plt.plot(range(len(errorPerIter)), errorPerIter, label='Original')
@@ -132,19 +132,22 @@ def plot_isocost_and_trajectory(A, b, trajectory_f, trajectory_f2):
     plt.show()
 
 # Use the functions
-x_truth, sigmaMax = groundTruthFinder(A, b)
+svd_truth, sigmaMax = SVDFinder(A, b)
 delta2 = 0.01*sigmaMax  # Choose an appropriate value for delta
-(final_x_f, errorPerIter_f, costPerIter_f), (final_x_f2, errorPerIter_f2, costPerIter_f2) = gradientDescent(start, A, b, step, iterations, x_truth, delta2)
+
+(final_x_f, errorPerIter_f, costPerIter_f), (final_x_f2, errorPerIter_f2, costPerIter_f2) = gradientDescent(start, A, b, step, iterations, svd_truth, delta2)
 # print(final_x_f)
 # print(final_x_f2)
 
 
-# plot_error(errorPerIter_f, errorPerIter_f2)
+plot_error(errorPerIter_f, errorPerIter_f2)
 
 plot_cost(costPerIter_f, costPerIter_f2)
 
-
-plot_isocost_and_trajectory(A, b, final_x_f, final_x_f2)
-
 print('Autovalor mas imp', sigmaMax)
-#graficar la norma 2 de x (se deberia achicar ) y la de Ax - b
+
+
+# TODO
+# graficar la norma 2 de x (se deberia achicar ) y la de Ax - b
+# plot_isocost_and_trajectory(A, b, final_x_f, final_x_f2)
+# (Maybe) plotear como varia la convergencia con distintos valores de Delta 
