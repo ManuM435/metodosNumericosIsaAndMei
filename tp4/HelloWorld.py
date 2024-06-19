@@ -37,8 +37,8 @@ def gradientDescent(start, A, b, learn_rate, iters, delta, svd_truth):
         x_f2 += - (learn_rate * evalF2)
 
         # Calcular Normas de x_f & x_f2
-        xFNorms.append((np.linalg.norm(x_f))**2)
-        xF2Norms.append((np.linalg.norm(x_f2))**2)
+        xFNorms.append((np.linalg.norm(x_f)))
+        xF2Norms.append((np.linalg.norm(x_f2)))
 
         # Calcular Costos
         cost_f = costFunction(A, b, x_f)
