@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
  
 
-np.random.seed(130605)
+np.random.seed(19)
 # xd con esta seed se van las iteraciones 
 # claramente varian en base a la seed que usemos. A lo mejor podemos mostrar en Apendice como con algunas seeds varia, con otras no
 
@@ -101,9 +101,9 @@ d = 100
 A, b = randomMatrixGenerator(n, d)
 
 # Inicializar el vector x con d elementos
-start = np.random.randint(0, 10, d)
+startOriginal = np.random.randint(0, 10, d)
 
-step = stepInator(A)
+stepOriginal = stepInator(A)
 
 iterations = 4000
 
@@ -112,19 +112,39 @@ iterations = 4000
 
 # Use the functions
 svd_truth, sigmaMax = SVDFinder(A, b)
-delta2 = 0.01 * sigmaMax  # Choose an appropriate value for delta
+deltaOriginal = 0.01 * sigmaMax  # Choose an appropriate value for delta
 
-(final_x_f, costPerIter_f), (final_x_f2, costPerIter_f2), (xFNorms, xF2Norms), (svdFnorms, svdF2Norms) = gradientDescent(start, A, b, step, iterations, delta2, svd_truth)
+(final_x_f, costPerIter_f), (final_x_f2, costPerIter_f2), (xFNorms, xF2Norms), (svdFnorms, svdF2Norms) = gradientDescent(startOriginal, A, b, stepOriginal, iterations, deltaOriginal, svd_truth)
 
-# Graf'em Norms
-plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of x', scale='linear')
+# # Graf'em Norms
+# plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of x', scale='linear')
 
-# Graf'em Costos
-plotFvF2(costPerIter_f, costPerIter_f2, 'Cost', 'Cost of Gradient Descent', scale='log')
+# # Graf'em Costos
+# plotFvF2(costPerIter_f, costPerIter_f2, 'Cost', 'Cost of Gradient Descent', scale='log')
 
-# Graf'em relative error SVD
-plotFvF2(svdFnorms, svdF2Norms, 'Relative Error SVD', 'Relative Error between x and x_svd', scale='log')
+# # Graf'em relative error SVD
+# plotFvF2(svdFnorms, svdF2Norms, 'Relative Error SVD', 'Relative Error between x and x_svd', scale='log')
 
+
+
+
+
+# Plot The Functions with Different Starting Conditions
+starts = [startOriginal]
+for s in range(1, 6):
+    starter = np.random.randint(s*2 + 1, s**2 + 5, d)
+    starts.append(starter)
+print(starts)
+
+
+
+
+# Plot The Functions with Different Step Sizes
+steps = []
+
+
+# Plot Cost Function F2 convergence with varying delta values
+deltas = [0.1, 1, deltaOriginal, 24, 100]
 
 
 
