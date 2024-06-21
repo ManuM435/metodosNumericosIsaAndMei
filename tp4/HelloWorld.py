@@ -136,6 +136,14 @@ plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of Approximation Solutions', scale='li
 # Graf'em Costos
 plotFvF2(costPerIter_f, costPerIter_f2, 'Cost', 'Cost of Gradient Descent', scale='log')
 
+plt.plot(range(len(costPerIter_f2)), costPerIter_f2, label='L2 Regularized', color="mediumvioletred")
+plt.xlabel('Iteration')
+plt.ylabel('Cost')
+plt.title('Cost of F2')
+plt.yscale('log')
+plt.legend()
+plt.show()
+
 # Graf'em relative error SVD
 plotFvF2(svdFnorms, svdF2Norms, 'Relative Error SVD', 'Relative Error between Solution and Pseudoinverse', scale='log')
 
