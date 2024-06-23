@@ -184,48 +184,48 @@ plt.legend(loc='upper right')
 plt.show()
 
 
-# # Plot The Functions with Different Step Sizes
-# steps = [stepOriginal]
-# x1_vals_step, x2_vals_step = [], []
-# x1_cost_step, x2_cost_step = [], []
+# Plot The Functions with Different Step Sizes
+steps = [stepOriginal]
+x1_vals_step, x2_vals_step = [], []
+x1_cost_step, x2_cost_step = [], []
 
-# stepHigh = stepOriginal * 1.92
-# steps.append(stepHigh)
+stepHigh = stepOriginal * 1.99
+steps.append(stepHigh)
 
-# stepLow = (stepOriginal / 10)
-# steps.append(stepLow)
+stepLow = (stepOriginal / 10)
+steps.append(stepLow)
 
-# stepVeryLow = (stepOriginal / 50)
-# steps.append(stepVeryLow)
+stepVeryLow = (stepOriginal / 50)
+steps.append(stepVeryLow)
 
-# stepExtremeLow = (stepOriginal / 500)
-# steps.append(stepExtremeLow)
+stepExtremeLow = (stepOriginal / 500)
+steps.append(stepExtremeLow)
 
-# print(stepOriginal)
-# print(stepLow)
+print(stepOriginal)
+print(stepLow)
 
-# step_iters = 4000
+step_iters = 4000
 
-# for stepping in steps:
-#     (x1f_stp, cost1f_stp), (x1f2_stp, cost1f2_stp), _, _ = gradientDescent(startOriginal, A, b, stepping, step_iters, deltaOriginal, svd_truth)
-#     x1_vals_step.append(x1f_stp)
-#     x2_vals_step.append(x1f2_stp)
-#     x1_cost_step.append(cost1f_stp)
-#     x2_cost_step.append(cost1f2_stp)
+for stepping in steps:
+    (x1f_stp, cost1f_stp), (x1f2_stp, cost1f2_stp), _, _ = gradientDescent(startOriginal, A, b, stepping, step_iters, deltaOriginal, svd_truth)
+    x1_vals_step.append(x1f_stp)
+    x2_vals_step.append(x1f2_stp)
+    x1_cost_step.append(cost1f_stp)
+    x2_cost_step.append(cost1f2_stp)
 
-# # Plot the convergence of the cost functions with the 5 different steps
-# plt.plot(range(len(x1_cost_step[0])), x1_cost_step[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)
-# plt.plot(range(len(x2_cost_step[0])), x2_cost_step[0], label='Original F2', color="lime", linestyle='--', alpha=0.85)
-# plt.plot(range(len(x1_cost_step[1])), x1_cost_step[1], label='High Step F', color="darkorange")
-# plt.plot(range(len(x2_cost_step[1])), x2_cost_step[1], label='High Step F2', color="orangered")
-# plt.plot(range(len(x1_cost_step[2])), x1_cost_step[2], label='Low Step F', color="royalblue")
-# plt.plot(range(len(x2_cost_step[2])), x2_cost_step[2], label='Low Step F2', color="navy")
-# plt.xlabel('Iteration')
-# plt.ylabel('Cost')
-# plt.title('Cost of Gradient Descent with Different Step Sizes')
-# plt.yscale('log')
-# plt.legend(loc='upper right')
-# plt.show()
+# Plot the convergence of the cost functions with the 5 different steps
+plt.plot(range(len(x1_cost_step[0])), x1_cost_step[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)
+plt.plot(range(len(x2_cost_step[0])), x2_cost_step[0], label='Original F2', color="lime", linestyle='--', alpha=0.85)
+plt.plot(range(len(x1_cost_step[1])), x1_cost_step[1], label='High Step F', color="darkorange")
+plt.plot(range(len(x2_cost_step[1])), x2_cost_step[1], label='High Step F2', color="orangered")
+plt.plot(range(len(x1_cost_step[2])), x1_cost_step[2], label='Low Step F', color="royalblue")
+plt.plot(range(len(x2_cost_step[2])), x2_cost_step[2], label='Low Step F2', color="navy")
+plt.xlabel('Iteration')
+plt.ylabel('Cost')
+plt.title('Cost of Gradient Descent with Different Step Sizes')
+plt.yscale('log')
+plt.legend(loc='upper right')
+plt.show()
 
 
 # plt.plot(range(len(x1_cost_step[0])), x1_cost_step[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)

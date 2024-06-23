@@ -1,0 +1,385 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{ifthen}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage[bottom=1in]{geometry} 
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage[justification=centering]{caption}
+
+% Para acomodar los graficos y sus captions
+\setlength{\abovecaptionskip}{-1.4pt} % Adjust this length as needed
+\setlength{\belowcaptionskip}{-1pt} % Adjust this length as needed
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyheadoffset[L]{+2cm}
+    \fancyhead[L]{{Métodos Numéricos y Optimización TP3 2024 {1-\pageref{LastPage}}}}
+    \fancyheadoffset[R]{+2cm}
+    \fancyhead[R]{Terminado 5/6/2024, Publicado 6/6/2024}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyfoot[C]{\thepage}
+}
+
+\fancypagestyle{myheader}{
+    \fancyhf{}
+    \fancyhead[LE,RO]{\ifthenelse{\isodd{\value{page}}}{titulin}{Manuel Meiriño e Isabel Castañeda}}
+    \fancyfoot[C]{\thepage}
+}
+
+\pagestyle{myheader}
+
+\makeatletter
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\huge \@title}\\
+        \vspace{10pt} 
+        {\Large \@date}
+    \end{center}
+}
+\makeatother
+
+\title {Desempeño del Método del Descenso del Gradiente evaluado en el problema de Cuadrados Mínimos}
+
+\date{Junio 2024}
+
+\begin{document}
+
+\pagenumbering{arabic}
+
+\maketitle
+\thispagestyle{plain}
+
+\begin{center}
+
+\large
+\textbf{Castañeda, Isabel}\\
+Universidad de San Andrés\\
+icastaneda@udesa.edu.ar\\
+N° de Legajo: 35495\\
+\vspace{1\baselineskip}
+
+\large
+\textbf{Meiriño, Manuel}\\
+Universidad de San Andrés\\
+mmeirino@udesa.edu.ar\\
+N° de Legajo: 35723
+\end{center}
+
+\vspace{0.5cm}
+
+\section*{Abstract}
+\normalsize
+ 
+
+\noindent El objetivo de esta investigación fue evaluar el desempeño del método del Descenso del Gradiente aplicado a un problema de Cuadrados Mínimos. 
+\vspace{\baselineskip}
+
+\noindent En el experimento se evaluaron las funciones de costo a las soluciones, una con una penalización añadida, otra sin. Y se proyectaron sus variaciones y convergencias al variar diferentes parámetros de la función de Gradient Descent. 
+\vspace{\baselineskip}
+
+\noindent Luego de realizar las proyecciones, se discutio la importancia de la penalización en evitar los valores outliers y el overfitting. Y a su vez se pudo concluir como parametros como la condicion inicial resultaban casi irrelevantes para las soluciones, pero parametros como el valor de la penalización y el Learning Rate elegidos tenian efectos notables y pertinentes sobre la aplicación del método. 
+
+
+\section*{Introducción}
+
+\noindent A menudo los problemas, tanto en la matematica como fuera de esta, existen problemas que, aunque aparenten no poder solucionarse de forma inmediata con los metodos tradicionales, siguen teniendo formas de ser resueltos, a veces solo requieren pensar un poco 'outside the box'. \vspace{\baselineskip}
+
+\noindent Por ejemplo, supongase el caso que se quiere viajar desde Ushuaia hasta Toronto en el menor tiempo posible, existen infinitas formas de realizar el viaje, se puede pasar primero por Paris y viajar desde alla; se puede hacer una escala en Australia, ir hasta Asia, volver a Argentina y salir de Cordoba; o se puede incluso dar la vuelta al mundo 450 veces, pasar por la Luna y luego ir a Toronto. Pero todas estas, e infinitas mas son formas inconvenientes, costosas, y al fin y al cabo, no-óptimas de realizar este viaje, y aunque algunas formas sean mejores que otras, solo existira 1 solucion que tenga el menor tiempo de todas. \vspace{\baselineskip}
+
+\noindent En estos casos, se tiene un problema como el mencionado antes, donde uno no puede simplemente plantear una ecuacion que se despeja a mano y se halla la solucion. Y por el otro lado, tambien seria impracticable intentar algo como "probar todas las formas de viajar y ver cual tarda menos" ya que estas son infinitas. Ahi es donde entra en juego pensar fuera de la caja. \vspace{\baselineskip}
+
+\noindent Por ejemplo, a este problema se lo puede modelar como una Funcion $F(x)$ donde $x$ es la ruta ideal, de esta manera, el problema pasa a ser uno de minimizacion, encontrando una ruta tal que la funcion sea lo mas pequeña posible. Como ya se menciono antes, nuestra situacion aqui tiene un $F(x)$ con un minimo unico (solo existe 1 camino mas rapidos que todos los demas), cumple la propiedad de una funcion convexa, que en caso de tener punto minimo, este es un minimo global (es decir, el unico punto minimo en la funcion, y demas aclarar, el de menor valor, en este caso el mas cercano a 0). \vspace{\baselineskip}
+
+\noindent Entonces como ya mencionado, este tipo de problemas y sus formas de solucionarlos existen tanto para la gente en su vida cotidiana, como para los matematicos. Tal como algunos viajeros se ponderaran el camino mas corto de Ushuaia a Toronto, en esta investigacion se buscará resolver otro problema de funcion convexa, sin solucion analitica, en el cual tambien es inviable analizar todos los casos dado que son infinitos. \vspace{\baselineskip}
+
+\noindent Este problema lleva el nombre de cuadrados minimos y consiste en encontrar el mejor vector $x$ tal que al multiplicarlo por una cierta matriz no inversible, se obtenga la solucion mas cercana posible posible a un vector dado. O como se planteo previamente con los viajes, minimizar una funcion $F(x)$, en este caso $F(x) = \|Ax - b\|^2_2$.
+
+
+\section*{Materiales y Métodos}
+
+\noindent Los materiales utilizados en esta investigación consistieron en nuestras computadoras para programar las soluciones (a través de Visual Studio Code), usando las librerias numpy y matplotlib para facilitar y visualizar los procesos y resultados. 
+
+\subsection*{Metodo de Descenso del Gradiente}
+\noindent El método conocido como Gradient Descent es un método iterativo que tiene como objetivo minimizar la función \( f(x_1, x_2, \ldots, x_n) \). Para hacerlo, utiliza el gradiente de \( f(x) \), el cual provee la dirección en la que \( f \) decrece más rápidamente (la más empinada). El método posee la siguiente estructura: \[ x_{k+1} = x_k - s_k \nabla f(x_k) \]
+
+\noindent Donde \( x_{k+1} \) es la próxima solución, la cual está dada por \( x_k \) (la solución anterior) y el término \( - s_k \nabla f(x_k) \), compuesto por \( s_k \), el parámetro que determina la magnitud del paso que se va a dar (conocido como Learning Rate), y \( \nabla f(x_k) \), que representa el gradiente de \( f(x) \). Este término lleva un signo \( - \) adelante porque es el que se encarga de hacer que el método descienda. (Strang, 2019)
+
+
+\subsection*{Descomposición de Valores Singulares (SVD)}
+La descomposición de valores singulares de una matriz \(A\) ($m \times n$) consiste en factorizarla de la siguiente manera: \[A = USV^T
+\] 
+
+\noindent Donde $U$ es una matriz ortogonal $m \times m$, V es una matriz ortogonal $n \times n$ y S es una matriz $m \times n$, cuyos elementos diferentes de cero se denominan valores singulares y se encuentran a lo largo de la diagonal principal. Los valores singulares son las raíces cuadradas positivas de los autovalores de \(AA^t\). La construcción de las matrices U, S y V en este trabajo fue delegada a la ya-mencionada librería numpy de Python (Burden \& Faires, 2011) \vspace{\baselineskip}
+
+\subsection*{Cuadrados Mínimos}
+Sea \( X \) una matriz \( m \times n \), con \( m > n \), y \( y \) un vector en \( \mathbb{R}^m \). El objetivo de Cuadrados Mínimos es encontrar un $\beta$ en \( \mathbb{R}^n \) para la mejor aproximación de $X\beta$ a las etiquetas $y$, lo cual se puede hacer buscando que su diferencia sea lo mas pequeña posible, es decir, minimizando la norma \( \|X\beta - y\|_2 \). \vspace{0.05cm}
+
+\noindent Estos problemas suelen solucionarse invirtiendo la $X$ e igualando $\beta = X^{-1}y$, pero al tener una $X$ no-cuadrada, esta no se puede invertir directamente, por lo cual una forma de aproximar dicha operación es descomponiendo a $X$ con SVD, e invertir sus componentes para así encontrar la 'pseudoinversa' de $X$, denominada $X^+$. Utilizando que $U, V^T$ son ortogonales, entonces $U^{-1} = U^T$ y $(V^T)^{-1} = V$. Por lo cual la pseudoinversa se puede despejar como \( X^+ = VS^{-1}U^T \). \vspace{0.35\baselineskip}
+
+\noindent Despejando la ecuación de la norma, se puede hallar la siguiente igualdad:
+\[
+\|X\beta - y\|_2 = \|USV^T \beta - U U^T y\|_2 = \|S V^T \beta - U^T y\|_2
+\]
+
+\section*{Desarrollo Experimental}
+
+\subsection*{Definicion de funcion de Gradient Descent}
+
+\noindent Se comenzo generando aleatoriamente una matriz $A \in \mathbb{R}^{5 \times 100}$, junto con un vector $b \in \mathbb{R}^5$ mediante la funcion random de la libreria Numpy. Luego, para aplicar el Descenso de Gradiente, el step usado para la definir la Learning Rate fue 
+$Step = \left(\frac{1}{\lambda_{max}}\right)$ donde $\lambda_{max}$ es el autovalor mas grande (y consecuentemente mas significativo) de la matriz Hessiana de $A$. \vspace{\baselineskip}
+
+\noindent Se tomo dicha decision ya que si $\lambda_{max}$ es muy grande, el step sera mas pequeño. Esto resultaría conveniente ya que si el espacio donde se mueve el problema es poco uniforme, conviene que el metodo se mueva de a pasos mas pequeños para prevenir irse demasiado lejos de la solucion. Y por el otro lado, si $\lambda_{max}$ es muy pequeño, entonces no deberia resultar en problemas significativos usar un Learning Rate un poco mas grande para el metodo. \vspace{\baselineskip}
+
+\noindent El ultimo paso en la funcion de Gradient Descent fue seleccionar una condicion inicial, representada por un vector $X_0 \in \mathbb{R}^{100}$ generado aleatoriamente. Y luego, para todas las operaciones, se definió que el metodo iteraria $4000$ veces para realizar suficientes casos, sin sobresaturar demasiado la carga algoritmica.
+\vspace{\baselineskip}
+
+
+\subsection*{Funciones de Costo y Solucion a Variables de Decisión}
+
+\noindent Para obtener las mejores aproximaciones posibles, se definieron primero las 'Funciones de Costo', con $F(x)$ siendo una funcion de costo regular, y $F_2(x)$ siendo una funcion de costo con una penalizacion añadida. Estas fueron representadas por las siguientes ecuaciones:
+\begin{align}
+F(x) &= (Ax - b)^T (Ax - b) \\
+F_2(x) &= F(x) + \delta_2 \|x\|^2
+\end{align}
+
+\noindent Donde en este caso el $\delta_2$ elegido es $\frac{\sigma}{100}$ donde $\sigma$ es el valor singular mas grande de $A$.
+Y utilizando estas ecuaciones, se pudo definir entonces una formula para los valores de $x$ que se tomarian y a los cuales se les aplicarian las operaciones. Comenzando con la condicion inicial $X_0$, utilizando en cada iteracion un valor de $x = \{x_1, x_2, ..., x_k\}$. Estos valores se determinaron con la siguiente formula:
+\[
+x_{k+1} = x_k - s \nabla F(x_k)
+\]
+
+\noindent Donde $s$ es el step o Learning Rate original ya mencionada $\left(\frac{1}{\lambda_{max}}\right)$, y $\nabla F(x_k)$ representa el gradiente de la Funcion de Costo correspondiente. Los gradientes de estas funciones fueron calculados de la siguiente manera:
+\vspace{-0.5cm}
+
+\begin{align*}
+\nabla F(x) &= 2 \times A^T \times (Ax - b), \\
+\nabla F_2(x) &= \nabla F(x) + 2 \times \delta_2 \times x.
+\end{align*}
+
+\noindent Por ultimo, la condicion inicial usada como "original" se considero el vector aleatorio de 100 enteros entre $(0, 10)$ .Utilizando estas formulas, se realizaron diversas operaciones y gráficos para evaluar el uso del Descenso de Gradiente con estas 2 formas de determinar los datos. 
+\vspace{\baselineskip}
+
+\noindent Lo primero que se hizo fue graficar las normas de las variables de decision a medida que se iteraba, para verque valores estas tomaban en cada Funcion de Costo, y evaluando si estas llegaban a una convergencia. \vspace{\baselineskip}
+
+\noindent Para evaluar que tan precisas se volvian estas variables de decision, se decidió proyectar el error relativo entre estas soluciones provistas por el metodo del Descenso de Gradiente, con la solucion obtenida mediante la pseudoinversa. Ya que, como fue explicado en el metodo de Cuadrados Minimos, esta se considera lo mas cercano a un ground truth que se puede hayar para un problema en el cual la matriz $A$ no tiene inversa. Estos errores se graficaron en 2 ocasiones, una con condicion inicial entre $(0, 1)$ y otra entre $(0, 10)$. \vspace{\baselineskip}
+
+\noindent Luego se comenzo a trabajar con las Funciones de Costo. Se evaluaron en un grafico, las dos Funciones de Costo mencionadas $(F(x), F_2(x)$ a medida que avanzaban las iteraciones, con los valores de Learning Rate y $\delta_2$ ya mencionados. Para visualizar que sucedia con las soluciones que el Gradient Descent iba generando, y si esta terminaba convergiendo como se esperaba. Tambien notando cual era el efecto de la penalizacion sobre el costo en $F_2$. \vspace{\baselineskip}
+
+\noindent Luego, teniendo como marco de referencia dichas funciones de costo con los parametros 'default', se evaluaron algunas variables. Para empezar, se hizo un grafico variando los parametros de la ya-mencionada variable $\delta_2$. Vale aclarar primero que la penalización \(\delta_2 \|x\|^2\) se decidio incluir con el fin de ponerle una especie de 'barrera' al metodo para que no logre llegar a su solucion mas exacta. \vspace{\baselineskip}
+
+\noindent  Si bien puede parecer algo contrario al objetivo, se toma esta mediada debido a que se busca evitar que el metodo se adapte demasiado a la particular muestra de datos utilizados y que consecuentemente no funcione adecuadamente cuando se busque trabajar con un set de datos diferente. Teniendo eso en cuenta, se graficaron las Funciones de $F_2(x)$ con diferentes valores para visualizar que efecto tenian estos cambios. \vspace{\baselineskip}
+
+\noindent Luego, se probo lo mismo pero con distintos Learning Rates (un step mas alto, y uno mas bajo), para asi analizar que efectos esto puede tener sobre la eficiencia y los resultados de las aproximaciones a medida que se desarrollan las iteraciones. Analizando tambien que pasaba con steps muy bajos, y extremadamente bajos, mas alla de solo valores un poco bajos o un poco altos. \vspace{\baselineskip}
+
+\noindent Por ultimo, se graficaron las funciones usando distintas condiciones iniciales para determinar si es que estas influyen en el costo de las soluciones del Descenso de Gradiente. Usando valores negativos de gran valor absoluto, y lo mismo con positivos, en comparacion con los regulares de enteros entre $(0, 10)$, se probo una condicion inicial "baja" de enteros entre $(-4200, -4000)$ y una condicion inicial "alta" de enteros entre $(40000, 42000)$.
+
+
+
+\section*{Resultados \& Analisis}
+
+\subsection*{Variables de Decision}
+
+\noindent Vale aclarar que en todos los graficos, la funcion $F$ y sus variables de decision asociados son considerados como aquellos de la funcion 'Original', mientras que los asociados a la funcion penalizada de $F_2$ se los considera aquellos de la 'L2 Regularizada'. 
+\vspace{\baselineskip}
+
+\noindent Como ya mencionado, el primer grafico realizado fue uno representando el la norma de las aproximaciones a traves de las iteraciones.
+
+\begin{figure}[ht]
+    \centering
+    \caption{Valores de las Normas de Soluciones al iterar}
+    \includegraphics[width=0.8\linewidth]{Figure1.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent Visualmente en esta figura, se puede deducir entonces que a medida que la norma converge, el efecto de cambio en las variables de decision se volvera constante, y los valores de $x$ con los que se aproxima la solucion terminan convergiendo como se ve en esta Figura 1. 
+\vspace{\baselineskip}
+
+\noindent El hecho de que la norma de las soluciones de la funcion regularizada converga a cero indica que se está evitando sobreajustar el método a la informacion particualar en la que se lo está probando en ese momento, y se estan ignorando valores 'outliers' los cuales son valores poco representativos del resto de los datoes y uy especificos de un cierto dataset.\vspace{\baselineskip}
+
+\noindent El error relativo de esta aproximacion se puede apreciar en las siguientes figuras, que comparan la solucion en cada iterción con la pseudoinversa del problema, hecha con SVD:
+
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \caption{Error con Start $(0, 1)$}
+        \label{fig:Image1.3}
+        \includegraphics[width=60mm]{Figure3.png}
+    \end{minipage}%
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \caption{Error con Start $(0, 10)$}
+        \label{fig:Image1.4}
+        \includegraphics[width=60mm]{Figure0.png}
+    \end{minipage}
+\end{figure}
+
+\noindent En esta figura se puede ver como en la funcion penalizada, el error tiende a un numero cercano a $0$, pero distinto a $0$, como se puede comprobar si se hace un mayor zoom a este error aumentando las iteraciones (ver Apendice 1.1). Se comentara mas sobre este fenomeno en la Figura 4. \vspace{\baselineskip}
+
+\noindent El error sí tiende a $0$ en la funcion original en el caso de condicion inicial entre $(0, 1)$ pero esto podria deberse a errores numericos ya que en todos los otros casos, esto no sucede. El error converge a una cantidad concreta en ambas situaciones para ambas funciones. Esto es coherente con lo visto en la Figura 1, la cual utiliza Start $(0, 10)$, ya que la norma de la solucion para $F(x)$ se mantiene constante, y el de $F_2(x)$, cuando por supuesto, la 'ground truth' aproximada con la Pseudoinversa es una constante.
+\subsection*{Funciones de Costo}
+
+\noindent Se empezo graficando las ya-mencionadas funciones de Costo, para analizar como progresaban los costos en $F(x)$ y $F_2(x)$ a medida que se iteraba.
+
+
+\begin{figure}[ht]
+    \centering
+    \caption{Costo de las Soluciones al iterar}
+    \includegraphics[width=0.85\linewidth]{Figure2.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent En el grafico de la Figura 4 se puede claramente observar como en la Funcion Original, el costo tiende a $0$ (se asume $10^{-29} \sim 0$), mientras que para la $F_2(x)$ los valores no aparentan tender a $0$ una vez hecha una vision mas concentrada con una escala logaritmica, no se reconoce $10^{-5}$ como igualable a $0$. \vspace{\baselineskip}
+
+\noindent El costo con $F(x)$ converge a cero debido a que al el problema de Cuadrados Mínimos en este caso es convexo, es decir se tiene el Minimo Global y existe una única solucion optima al problema. El método del descenso del gradiente entonces, buscara seguir el 'camino' indicado por el gradiente hasta llegar a la solución, que debido a las caracteristicas del este problema es igual a cero. 
+\vspace{\baselineskip}
+
+\noindent En cuanto a la $F_2$, esa cercania pero no igualdad a $0$ puede ser claramente explicada por la Penalizacion que esta lleva. Recordando como esta planteada la funcion, $F_2(x) = F(x) + Penalizacion$ y al derivar para su gradiente, la Penalizacion se mantiene como una constante positiva (si $\delta_2 > 0$). Como se determino recien por el grafico, $F(x)$ tiende a $0$, por lo cual $F_2(x)$ tendera a $0$ $+$ dichos restos positivos de la Penalizacion, es decir unicamente a los restos positivos de la Penalizacion. \vspace{\baselineskip}
+
+\noindent Esta penalizacion es dependiente tanto de $x$ como de la constante $\delta_2$, con $x$ variando para cada iteracion (ver Figura 1) y $\delta_2$ siendo una variable fijada. Para ver como los cambios en esta variable $\delta_2$ afectan la tendencia del costo con $F_2(x)$, se puede observar la siguiente figura:
+
+\begin{figure}[ht]
+    \centering
+    \caption{Costo de las Soluciones al variar $\delta_2$}
+    \includegraphics[width=0.92\linewidth]{Figure6.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent Como se puede apreciar en el grafico, el valor de $\delta_2$ es directamente proporcional con el valor al cual converge el costo con $F_2$, a mayor $\delta_2$, mayor valor al que se converge, y a menor $\delta_2$, menor valor al que se converge. Como ya explicado, esto es debido a que esta convergera a su penalizacion (que depende la constante $\delta_2$. Para ver como los otros parametros afectaban estas convergencias, tambien se hizo un grafico variando la Learning Rate que es parte de la ecuacion en las soluciones:
+\vspace{2\baselineskip}
+
+\begin{figure}[ht]
+    \centering
+    \caption{Costo de las Soluciones al variar Learning Rate}
+    \includegraphics[width=0.96\linewidth]{Figure13.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent En la figura se puede apreciar que al aumentar la Learning Rate, los pasos se pueden volver demasiado largos, hasta el punto que al acercarse a la solucion, la funcion termina sobrepasandose y adelantandose de esta, como si fuera un golfista golpeando la bola demasiado fuerte. Esto causa que la funcion (habiendose pasado) vuelva para atras, vuelva a pasarse, vuelva a ir para adelante, vuelva a pasarse, vuelva para atras, etc. 
+\vspace{\baselineskip}
+
+\noindent Y este ciclo de adelantar y retroceder se puede repetir indefinidamente, como se ve claramente en la convergencia de $F$ al usar un step alto, en el cual se observan indefinidas oscilaciones alrededor de la solucion. Y aunqe no sea visible en este grafico por estar tapado por otras rectas, vale aclarar que esto sucede por igual para $F_2$. Dicha oscilacion se puede apreciar mejor en un grafico aislado y zoomeado, como se ve en Apendice 1.2. 
+
+\vspace{\baselineskip}
+
+\noindent En la Figura 6 tambien se puede ver como usar un step menor no afecta de forma negativa a la convergencia, se llega a la misma solucion (se considera que $10^{-25} \sim 10^{-29} \sim 0$, y que las diferencias son meramente errores numericos computacionales), aunque es visible que al hacer el step mas pequeño, la funcion ya tarda mas en converger. 
+\vspace{\baselineskip}
+
+\noindent Esto deja una importante demostracion de por que hacer un step muy pequeño puede traer sus problemas, aunque en este grafico no sea tan claro debido a que las $4000$ iteraciones son mas que suficientes para este "step bajo" que vale aclarar es 10 veces menor al step original de $\left(\frac{1}{\lambda_{max}}\right)$. Pero si se redujera aun mas el step, podrian pasar otros inconvenientes:
+\vspace{3\baselineskip}
+
+\begin{figure}[ht]
+    \centering
+    \caption{Costo de las Soluciones al usar Learning Rate muy bajas}
+    \includegraphics[width=0.92\linewidth]{Figure12.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent Como se puede apreciar en la figura, al usar un Step muy bajo (en este caso, 50 veces mas bajo que el original) se puede ver lo lento que converge en comparacion, hasta el punto que para la $F$ Original, 4000 iteraciones son apenas suficientes y justas. Y al usar un step extremadamente bajo (500 veces mas bajo que el original), en 4000 no se puede apreciar la convergencia a la solucion, ni siquiera se puede apreciar la diferencia entre el costo de $F$ y $F_2$ (las rectas estan una encima de la otra). Por eso es importante buscar un punto ideal para Learning Rate usada. \vspace{\baselineskip}
+
+\noindent Por ultimo, se variaron significativamente las condiciones iniciales, con diferencias en los multiples ordenes de magnitud, para asi evaluar si estas tenian algun efecto notable en los costos producidos por las soluciones. 
+\vspace{15\baselineskip}
+
+\begin{figure}[ht]
+    \centering
+    \caption{Costo de las Soluciones al variar Condicion Inicial}
+    \includegraphics[width=1\linewidth]{Figure20.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent En esta ultima figura, se puede ver como a diferencia de los otros parametros probados, la condicion inicial no parece tener un efecto notable en la convergencia final, para ninguna de las 2 funciones. En la escala logartmica usada, se vuelven indistinguibles para $F_2$. 
+\vspace{\baselineskip}
+
+\noindent Y aunque se puede ver una diferencia para las convergencias con $F$ original, en este caso se considera que son valores suficientemente bajos como para llamarlo error numerico/computacional, asumiendo entonces que $10^{-19} \sim 10^{-22} \sim 10^{-29} \sim 0$. De ser asi, entonces se podria afirmar que independientemente de la condicion inicial, las soluciones convergen por igual en ambos casos, asi generano los mismos costos. 
+
+
+
+\vspace{20\baselineskip}
+
+
+\section*{Conclusión}
+
+
+\noindent Lo primero que se pudo ver en esta investigacion, es como el metodo de Gradient Descent funcionaba para aproximar la solucion, reduciendo el costo, convergiendo a $0$, y asi resolviendo un problema que aparentaba no poder ser resuelto analiticamente. Como se comento en los resultados, esto debido a que el problema que se tenía era uno convexo, teniendo una unica solucion optima. \vspace{\baselineskip}
+
+\noindent Se pudo observar desde un primer momento la gran importancia e influencia que tuvo la penalizacion que le fue agregada a la funcion de costo original. Esto se evidenció al ver como la norma de $x$ con penalizacion se acercaba a cero en mucho mayor medida en comparacion con la funcion original, mientras que en el caso de las funciones de costo la original era la que convergia a $0$, mientras que la penalizada convergia justamente a el valor representado por el termino de penalizacion. \vspace{\baselineskip}
+
+\noindent Esta informacion lleva a una conclusion y confirmacion muy importante, que es la de por que es relevante agregar la penalización. A pesar de que el costo no sea exactamente $0$, es lo suficientemente bajo con la penalizacion como para ser una solucion pertinente, pero tambien al ver como la norma de $F_2$ tiende a $0$, a diferencia de la norma de $F$, se puede ver como funciona la penalizacion para evitar que la funcion tenga en cuenta los valores 'outliers'.
+\vspace{\baselineskip}
+
+\noindent De no ser asi, se podria generar el problema de over-fitting. El cual se genera cuando una funcion se sobre-satura de informacion, hasta el punto que se sobre-ajusta con tal de encajar todos los datos con la que se entrenó. Si, para el set con el cual se la entreno tendra un error un poco menor, pero si luego esa funcion se aplica a cualquier otro set de datos diferente, no podra ajustarse y reflejar las tendencias generales, dada su sobre-saturacion inicial forzandola a desviarse de tendencias, con tal de encajar la data inicial.
+\vspace{\baselineskip}
+
+\noindent Esto ya mencionado de que la funcion convergia a su penalizacion, se comprobo de nuevo variando los valores del $\delta_2$ (una constante que multiplicaba la penalizacion en $F_2(x)$). Verificando que al aumentar delta, el valor al que convergia costo con $F_2$ aumentaba proporcionalmente, y respectivamente sucedia lo mismo al reducir $\delta_2$. \vspace{\baselineskip}
+
+\noindent Pero no solo $\delta_2$, se variaron tambien otros distintos parametros para ver su efecto sobre las aproximaciones realizadas para la solucion, y el costo que estas tenian. Se verifico por ejemplo, que el metodo de Gradient Descent no depende de tener condiciones iniciales cercanas para llegar bien a la respuesta, y la diferencia en tiempo de converger es practicamente nula al ajustar estos valores. \vspace{\baselineskip}
+
+\noindent Sin embargo, dicha diferencia de tiempo se vuelve extremadamente notable cuando se modifica el valor de la Learning Rate. Se concluyo la importancia de tener una Learning Rate ni demasiado alta, ni demasiado baja. Ya que se vio como una Learning Rate demasiado alta causa oscilaciones indefinidas ya que nunca se da el paso exacto para la solucion, pero a su vez una Learning Rate demasiado baja lleva a un tiempo de convergencia demasiado alto, incrementando el costo computacional a un punto completamente innecesario. \vspace{\baselineskip}
+
+\noindent Esta es una conclusion importante a tomar, se debe tener en cuenta que al resolver estos problemas, siempre se puede tomar un step teoricamente lo mas bajo posible para la Learning Rate, al igual que para resolverle el dilema al imaginario viajero que desea ir de Ushuaia a Toronto, por supuesto que siempre se va a poder llegar a la solucion optima probando caminos centimetro por centimetro. 
+
+\noindent Pero cuando se quiere encontrar la solucion optima a un viaje de 11,000km, hay que tener en cuenta la bigger picture, y saber que iterar centimetro por centimetro no solo no es algo computacionalmente factible, sino que existe un punto en el cual la busqueda de precision extrema pasa a convertirse mas en una maldicion que una virtud. 
+\vspace{\baselineskip}
+
+\noindent Por supuesto que no seria ideal saltar ir al extremo de saltar a una solucion directa de inmediato, probablemente la falta de calculos va a significar que no va a ser ni cercana a optima (como si fuese Bogo Sort). Pero tampoco hay que caer al otro extremo de gaster demasiados recrsos y tiempo innecesarios en optimizar una solucion que no lo requiere. Llega el punto en el cual la decision de 'elegir un camino aleatorio', es algo tan ridiculo e insensato como la decision de 'probar todos los (practicamente infinitos) caminos'. Ya que ambos tienden a cero, a solucion inexistente, uno por probabilidad infinita a ser la solucion, y el otro por tiempo infinito en calculo.
+\vspace{\baselineskip}
+
+\noindent Este dilema de como optimizar el Gradient Descent, es en si un dilema parecido al mismismo problema que busca solucionar, el del viajero de Ushuaia que desea ir a Toronto. Por supuesto que en teoria podra llegar a su destino con cualquier ruta, tanto volando por todo el Pacifico como dando la vuelta al mundo 450 veces, al igual que el Gradient Descent en teoria "eventualmente" llegara a su solucion con cualquier Learning Rate que sea infinitamente pequeña.  \vspace{\baselineskip}
+
+\noindent Pero la optimizacion no se trata sobre quedarse unicamente en la "teoria", se trata de aplicar estas soluciones a la practica. La solucion existe, y nunca te la vas a pasar yendo infinitamente lento, pero por eso objetivo de la optimizacion no es solo llegar a la solucion, sino hallar la forma mas rapida posible de poder buscarla.  
+\vspace{\baselineskip}
+
+\subsection*{Potenciales Mejoras}
+
+\noindent Una potencial mejora para este análisis sería haber utilizado el método denominoado "Exact Line Search". Este último sirve para elegir un Learning Rate que minimize la funcion $F(x)$ en cada iteracion. Es decir, en vez de seleccionar un step fijo, este método permite adaptar cada paso a la iteración, potenciamente evitando divergencias que ocurririan con un step fijo; especialemte en problemas mas complejos que Cuadrados Minimos. Pero se decidio no realizarla, ya que el problema trabajado era lo suficientemente 'simple' como para no requerir un metodo de complejidad mas elevada como lo era Exact Line Search.
+\vspace{\baselineskip}
+
+\noindent Tambien por supuesto se podrian haber implementado mas variaciones extremas, steps aun mas altos, condiciones iniciales mas separadas, se podia probar con mas o menos dimensiones, mas iteraciones, deltas aun mas grandes o pequeños, etc. Pero esto se considero relativamente trivial ya que los graficos presentados mostraban la mayoria de la informacion pertinente.
+\vspace{\baselineskip}
+
+\noindent Por ultimo, una potencial mejora relacionada a las conclusiones tomadas del overfitting, podria haber sido probar las funciones adquiridas sin la penalizacion, vs con la penalizacion, para otros sets de datos, y comprobar si se producia un problema de overfitting o no. Se decidio no realizar esto ya que requeriria demasiado trabajo adicional y espacio adicional para explicarlo, en una investigacion cuyo enfasis no es exclusivamente el overfitting. 
+\vspace{10\baselineskip}
+
+\label{LastPage}
+
+\section*{Bibliografia}
+
+\noindent Burden, R., \& Faires, J. D. (2011). Numerical Analysis (Vol. 9). Boston: Rcihard Stratton. Retrieved May 11, 2024, from \url{https://faculty.ksu.edu.sa/sites/default/files/numerical_analysis_9th.pdf}
+\vspace{\baselineskip}
+
+\noindent Strang, G. (2019). Linear Algebra and Learning from Data. Wellesley, Massachussets, United States of America: Cambridge Press. Retrieved June 21, 2024, from \url{http://staff.ustc.edu.cn/~ynyang/2023/books/8.pdf}
+
+
+\section*{Apendice}
+
+\subsection*{Apendice 1.1}
+
+\noindent Como se ve claramente en la figura, el error tiende aproximadamente a $10^{-5}$ que se determinó, no se considera como igualable a $0$.
+
+\begin{figure}[ht]
+    \centering
+    \caption{Costo de las Soluciones al variar Condicion Inicial}
+    \includegraphics[width=1\linewidth]{Appendice1.png}
+    \label{fig:Image 1}
+\end{figure}
+\vspace{15\baselineskip}
+
+\subsection*{Apendice 1.2}
+% 1.2 Mostrar Figura de Zoom en la Oscilacion de F2 con Steps High
+
+\begin{figure}[ht]
+    \centering
+    \caption{Close-up de la oscilación de la función $F_2(x)$ cuando el Learning Rate es muy grande}
+    \includegraphics[width=1\linewidth]{Apendice2.png}
+    \label{fig:Image 1}
+\end{figure}
+
+\noindent En este gráfico se puede apreciar como mirando extreamdamente cerca se llega a apreciar la oscilacion de la función $F_2(x)$.
+\end{document}
