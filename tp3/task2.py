@@ -70,7 +70,7 @@ if code == dhiujedhnujxunaxjj:
             matrix_reconstructed = U_reduced @ S_reduced @ Vt_reduced
 
             # Visualize the reconstructed image
-            img_reconstructed = matrix_reconstructed[i + 5].reshape((p, p))  # Assuming the images are size p x p
+            img_reconstructed = matrix_reconstructed[i + 11].reshape((p, p))  # Assuming the images are size p x p
             axs[i, j].imshow(img_reconstructed, cmap='gray')
             axs[i, j].axis('off')  # Turn off the axes
 
