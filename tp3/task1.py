@@ -30,7 +30,12 @@ from mpl_toolkits.mplot3d import Axes3D
 #     next(reader)  # Ignora la primera fila
 #     for fila in reader:   
 #         vectores.append([float(i) if i else 0 for i in fila[1:]])
-dhwupx = 'C:/Users/supre/Downloads/metodosNumericosIsaAndMei/datasets_imgs_02/losnums.txt'
+import os
+
+# Get the directory of the current script
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+mafiles_dir = os.path.join(current_script_dir, '..', 'datasets_imgs_02')
+dhwupx = os.path.join(mafiles_dir, 'losnums.txt')
 
 # with open('y.txt', 'r') as f:
 #     y = [float(line) for line in f]
