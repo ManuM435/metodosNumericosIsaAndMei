@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
  
 
 np.random.seed(19)
-# xd con esta seed se van las iteraciones 
-# claramente varian en base a la seed que usemos. A lo mejor podemos mostrar en Apendice como con algunas seeds varia, con otras no
 
 def sol(A, b, x):
     return (A @ x - b)
@@ -129,23 +127,23 @@ deltaOriginal = 0.01 * sigmaMax  # Choose an appropriate value for delta
 (final_x_f, costPerIter_f), (final_x_f2, costPerIter_f2), (xFNorms, xF2Norms), (svdFnorms, svdF2Norms) = gradientDescent(startOriginal, A, b, stepOriginal, iterations, deltaOriginal, svd_truth)
 
 
-# # Uncomment this for graphs
-# # Graf'em Norms
-# plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of Approximation Solutions', scale='linear')
+# Uncomment this for graphs
+# Graf'em Norms
+plotFvF2(xFNorms, xF2Norms, 'Norm', 'Norm of Approximation Solutions', scale='linear')
 
-# # Graf'em Costos
-# plotFvF2(costPerIter_f, costPerIter_f2, 'Cost', 'Cost of Gradient Descent', scale='log')
+# Graf'em Costos
+plotFvF2(costPerIter_f, costPerIter_f2, 'Cost', 'Cost of Gradient Descent', scale='log')
 
-# plt.plot(range(len(costPerIter_f2)), costPerIter_f2, label='L2 Regularized', color="mediumvioletred")
-# plt.xlabel('Iteration')
-# plt.ylabel('Cost')
-# plt.title('Cost of F2')
-# plt.yscale('log')
-# plt.legend()
-# plt.show()
+plt.plot(range(len(costPerIter_f2)), costPerIter_f2, label='L2 Regularized', color="mediumvioletred")
+plt.xlabel('Iteration')
+plt.ylabel('Cost')
+plt.title('Cost of F2')
+plt.yscale('log')
+plt.legend()
+plt.show()
 
-# # Graf'em relative error SVD
-# plotFvF2(svdFnorms, svdF2Norms, 'Relative Error SVD', 'Relative Error between Solution and Pseudoinverse', scale='log')
+# Graf'em relative error SVD
+plotFvF2(svdFnorms, svdF2Norms, 'Relative Error SVD', 'Relative Error between Solution and Pseudoinverse', scale='log')
 
 
 
@@ -228,51 +226,51 @@ plt.legend(loc='upper right')
 plt.show()
 
 
-# plt.plot(range(len(x1_cost_step[0])), x1_cost_step[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)
-# plt.plot(range(len(x2_cost_step[0])), x2_cost_step[0], label='Original F2', color="lime", linestyle='--', alpha=0.85)
-# plt.plot(range(len(x1_cost_step[3])), x1_cost_step[3], label='Very Low Step F', color="darkviolet")
-# plt.plot(range(len(x2_cost_step[3])), x2_cost_step[3], label='Very Low Step F2', color="indigo")
-# plt.plot(range(len(x1_cost_step[4])), x1_cost_step[4], label='Extreme Low Step F', color="chocolate", alpha=0.9)
-# plt.plot(range(len(x2_cost_step[4])), x2_cost_step[4], label='Extreme Low Step F2', color="saddlebrown")
-# plt.xlabel('Iteration')
-# plt.ylabel('Cost')
-# plt.title('Cost of Gradient Descent with Different Step Sizes')
-# plt.yscale('log')
-# plt.legend(loc='upper right')
-# plt.show()
+plt.plot(range(len(x1_cost_step[0])), x1_cost_step[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)
+plt.plot(range(len(x2_cost_step[0])), x2_cost_step[0], label='Original F2', color="lime", linestyle='--', alpha=0.85)
+plt.plot(range(len(x1_cost_step[3])), x1_cost_step[3], label='Very Low Step F', color="darkviolet")
+plt.plot(range(len(x2_cost_step[3])), x2_cost_step[3], label='Very Low Step F2', color="indigo")
+plt.plot(range(len(x1_cost_step[4])), x1_cost_step[4], label='Extreme Low Step F', color="chocolate", alpha=0.9)
+plt.plot(range(len(x2_cost_step[4])), x2_cost_step[4], label='Extreme Low Step F2', color="saddlebrown")
+plt.xlabel('Iteration')
+plt.ylabel('Cost')
+plt.title('Cost of Gradient Descent with Different Step Sizes')
+plt.yscale('log')
+plt.legend(loc='upper right')
+plt.show()
 
 
-# # Plot Cost Function F2 convergence with varying delta values
-# deltas = [deltaOriginal]
-# x1_vals_delta, x1_cost_delta = [], []
-# x2_vals_delta, x2_cost_delta = [], []
+# Plot Cost Function F2 convergence with varying delta values
+deltas = [deltaOriginal]
+x1_vals_delta, x1_cost_delta = [], []
+x2_vals_delta, x2_cost_delta = [], []
 
-# deltaHigh = (deltaOriginal * 60) ** 2
-# deltas.append(deltaHigh)
+deltaHigh = (deltaOriginal * 60) ** 2
+deltas.append(deltaHigh)
 
-# deltaLow = (deltaOriginal / 30) ** 2
-# deltas.append(deltaLow)
+deltaLow = (deltaOriginal / 30) ** 2
+deltas.append(deltaLow)
 
-# for deltaing in deltas:
-#     (x1f1_dlt, cost1f1_dlt), (x1f2_dlt, cost1f2_dlt), _, _ = gradientDescent(startOriginal, A, b, stepOriginal, iterations, deltaing, svd_truth)
-#     x1_vals_delta.append(x1f1_dlt)
-#     x1_cost_delta.append(cost1f1_dlt)
-#     x2_vals_delta.append(x1f2_dlt)
-#     x2_cost_delta.append(cost1f2_dlt)
+for deltaing in deltas:
+    (x1f1_dlt, cost1f1_dlt), (x1f2_dlt, cost1f2_dlt), _, _ = gradientDescent(startOriginal, A, b, stepOriginal, iterations, deltaing, svd_truth)
+    x1_vals_delta.append(x1f1_dlt)
+    x1_cost_delta.append(cost1f1_dlt)
+    x2_vals_delta.append(x1f2_dlt)
+    x2_cost_delta.append(cost1f2_dlt)
 
-# (x1f_dltOg, cost1f_dltOg), _, _, _ = gradientDescent(startOriginal, A, b, stepOriginal, iterations, deltaOriginal, svd_truth)
+(x1f_dltOg, cost1f_dltOg), _, _, _ = gradientDescent(startOriginal, A, b, stepOriginal, iterations, deltaOriginal, svd_truth)
 
-# # Plot the convergence of the cost functions with the 5 different deltas
-# plt.plot(range(len(x1_cost_delta[0])), x1_cost_delta[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)
-# plt.plot(range(len(x2_cost_delta[0])), x2_cost_delta[0], label='Original F2', color="lime", linestyle='--', alpha=0.85)
-# plt.plot(range(len(x2_cost_delta[1])), x2_cost_delta[1], label='High Delta F2', color="orangered")
-# plt.plot(range(len(x2_cost_delta[2])), x2_cost_delta[2], label='Low Delta F2', color="navy")
-# plt.xlabel('Iteration')
-# plt.ylabel('Cost')
-# plt.title('Cost of Gradient Descent with Different Delta Values')
-# plt.yscale('log')
-# plt.legend(loc='upper right')
-# plt.show()
+# Plot the convergence of the cost functions with the 5 different deltas
+plt.plot(range(len(x1_cost_delta[0])), x1_cost_delta[0], label='Original F', color="forestgreen", linestyle='--', alpha=0.85)
+plt.plot(range(len(x2_cost_delta[0])), x2_cost_delta[0], label='Original F2', color="lime", linestyle='--', alpha=0.85)
+plt.plot(range(len(x2_cost_delta[1])), x2_cost_delta[1], label='High Delta F2', color="orangered")
+plt.plot(range(len(x2_cost_delta[2])), x2_cost_delta[2], label='Low Delta F2', color="navy")
+plt.xlabel('Iteration')
+plt.ylabel('Cost')
+plt.title('Cost of Gradient Descent with Different Delta Values')
+plt.yscale('log')
+plt.legend(loc='upper right')
+plt.show()
 
 
 
